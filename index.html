@@ -7,82 +7,92 @@
 <style>
 body{
   margin:0;
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  min-height:100vh;
   background:linear-gradient(135deg,#f8e7e7,#fff6f0);
   font-family:Georgia, serif;
   overflow:hidden;
 }
 
-.carte{
-  width:72%;
-  min-height:260px;
-  padding:55px;
-  background:white;
-  border-radius:30px;
-  box-shadow:0 0 45px rgba(0,0,0,0.20);
+h1{
   text-align:center;
-  transition:opacity 0.8s ease, transform 0.8s ease;
+  color:#c28b54;
+  font-size:54px;
+  margin:35px 0 10px;
 }
 
-h1{
-  color:#c28b54;
-  font-size:52px;
-  margin:0 0 35px 0;
+.sous-titre{
+  text-align:center;
+  color:#8b5e3c;
+  font-size:24px;
+  margin-bottom:25px;
+}
+
+#mur{
+  width:92%;
+  height:78vh;
+  margin:auto;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:22px;
+  overflow:hidden;
+  align-content:start;
+}
+
+.carte{
+  background:white;
+  border-radius:24px;
+  padding:24px;
+  box-shadow:0 10px 28px rgba(0,0,0,0.14);
+  animation:apparition 0.8s ease;
 }
 
 .nom{
-  font-size:34px;
   color:#8b5e3c;
-  margin-bottom:20px;
+  font-size:25px;
+  font-weight:bold;
+  margin-bottom:12px;
 }
 
 .message{
-  font-size:44px;
-  line-height:1.25;
   color:#222;
+  font-size:26px;
+  line-height:1.25;
 }
 
 .info{
   position:fixed;
-  bottom:18px;
-  right:25px;
+  bottom:12px;
+  right:22px;
   font-family:Arial, sans-serif;
-  font-size:16px;
   color:#9b7a66;
+  font-size:15px;
 }
 
-.fade{
-  opacity:0;
-  transform:scale(0.96);
+@keyframes apparition{
+  from{opacity:0; transform:translateY(20px);}
+  to{opacity:1; transform:translateY(0);}
 }
 </style>
 </head>
 
 <body>
 
-<div class="carte" id="carte">
-  <h1>💗 Quentin & Sophie 💗</h1>
-  <div class="nom" id="nom">Chargement...</div>
-  <div class="message" id="message">Les messages vont apparaître ici.</div>
-</div>
+<h1>💗 Quentin & Sophie 💗</h1>
+<div class="sous-titre">Livre d’or des invités</div>
 
+<div id="mur"></div>
 <div class="info" id="info"></div>
 
 <script>
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRjWC39iTfhs66h6IzggGiK4T7zCk1AECayVdBFRviG6zvofKjJUtqk2MTxy2jwRKCbB5VtSQpul0-F/pub?gid=0&single=true&output=csv";
-
-let messages = [];
-let index = 0;
 
 function parserCSV(text){
   const lignes = text.trim().split(/\r?\n/);
   const resultats = [];
 
   for(let i = 1; i < lignes.length; i++){
-    const colonnes = lignes[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
+    const colonnes = lignes[i].match(/(".*?"|[^",;]+)(?=\s*[,;]|\s*$)/g) || [];
+
     const nom = (colonnes[0] || "").replace(/^"|"$/g,"").trim();
     const message = (colonnes[1] || "").replace(/^"|"$/g,"").trim();
     const valide = (colonnes[2] || "").replace(/^"|"$/g,"").trim().toUpperCase();
@@ -99,38 +109,29 @@ async function chargerMessages(){
   try{
     const reponse = await fetch(CSV_URL + "&cache=" + Date.now());
     const texte = await reponse.text();
-    const nouveauxMessages = parserCSV(texte);
+    const messages = parserCSV(texte);
 
-    if(nouveauxMessages.length > 0){
-      messages = nouveauxMessages;
-      document.getElementById("info").innerText = messages.length + " message(s)";
-    }
+    const mur = document.getElementById("mur");
+    mur.innerHTML = "";
+
+    messages.reverse().forEach(item => {
+      const carte = document.createElement("div");
+      carte.className = "carte";
+      carte.innerHTML = `
+        <div class="nom">${item.nom}</div>
+        <div class="message">“${item.message}”</div>
+      `;
+      mur.appendChild(carte);
+    });
+
+    document.getElementById("info").innerText = messages.length + " message(s)";
   }catch(e){
     document.getElementById("info").innerText = "Erreur de chargement";
   }
 }
 
-function afficherMessage(){
-  if(messages.length === 0) return;
-
-  const carte = document.getElementById("carte");
-  carte.classList.add("fade");
-
-  setTimeout(() => {
-    document.getElementById("nom").innerText = messages[index].nom;
-    document.getElementById("message").innerText = "“" + messages[index].message + "”";
-
-    index++;
-    if(index >= messages.length) index = 0;
-
-    carte.classList.remove("fade");
-  }, 800);
-}
-
-chargerMessages().then(afficherMessage);
-
-setInterval(chargerMessages, 10000);
-setInterval(afficherMessage, 7000);
+chargerMessages();
+setInterval(chargerMessages, 8000);
 </script>
 
 </body>
