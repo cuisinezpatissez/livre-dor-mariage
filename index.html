@@ -140,8 +140,15 @@ function afficher(messages){
   const defilement = document.getElementById("defilement");
 
   const contenuSimple = messages.map(carteHTML).join("");
+
   defilement.classList.remove("scroll");
   defilement.style.transform = "translateY(0)";
+
+  if(messages.length === 0){
+    defilement.innerHTML = "";
+    return;
+  }
+
   defilement.innerHTML = contenuSimple;
 
   requestAnimationFrame(() => {
@@ -152,10 +159,10 @@ function afficher(messages){
       defilement.innerHTML = contenuSimple;
       defilement.classList.remove("scroll");
     }else{
-      defilement.innerHTML = contenuSimple + contenuSimple;
+      defilement.innerHTML = contenuSimple + contenuSimple + contenuSimple;
 
       const distance = hauteurContenu;
-      const duree = Math.max(35, messages.length * 5);
+      const duree = Math.max(40, messages.length * 6);
 
       defilement.style.setProperty("--distance", "-" + distance + "px");
       defilement.style.animationDuration = duree + "s";
