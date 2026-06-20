@@ -45,6 +45,7 @@ h1{
 #defilement{
   width:94%;
   margin:0 auto;
+  will-change:transform;
 }
 
 .carte{
@@ -103,23 +104,57 @@ h1{
 <div class="info" id="info"></div>
 
 <script>
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRjWC39iTfhs66h6IzggGiK4T7zCk1AECayVdBFRviG6zvofKjJUtqk2MTxy2jwRKCbB5VtSQpul0-F/pub?gid=0&single=true&output=csv";
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRjWC39iTfhs66h6IzggGiK4T7zCk1AECayVdBFRviG6zvofKjJUtqk2MTxy2jwRKCbB5VtSQpul0-F/pub?gid=1981975631&single=true&output=csv";
 
 let derniereSignature = "";
+
+function nettoyer(valeur){
+  return (valeur || "")
+    .replace(/^"|"$/g,"")
+    .replace(/""/g,'"')
+    .trim();
+}
+
+function parserCSVLine(line){
+  const result = [];
+  let current = "";
+  let inQuotes = false;
+
+  for(let i = 0; i < line.length; i++){
+    const char = line[i];
+    const next = line[i + 1];
+
+    if(char === '"' && inQuotes && next === '"'){
+      current += '"';
+      i++;
+    }else if(char === '"'){
+      inQuotes = !inQuotes;
+    }else if((char === "," || char === ";") && !inQuotes){
+      result.push(current);
+      current = "";
+    }else{
+      current += char;
+    }
+  }
+
+  result.push(current);
+  return result;
+}
 
 function parserCSV(text){
   const lignes = text.trim().split(/\r?\n/);
   const resultats = [];
 
   for(let i = 1; i < lignes.length; i++){
-    const colonnes = lignes[i].match(/(".*?"|[^",;]+)(?=\s*[,;]|\s*$)/g) || [];
+    const colonnes = parserCSVLine(lignes[i]);
 
-    const nom = (colonnes[0] || "").replace(/^"|"$/g,"").trim();
-    const message = (colonnes[1] || "").replace(/^"|"$/g,"").trim();
-    const valide = (colonnes[2] || "").replace(/^"|"$/g,"").trim().toUpperCase();
+    const nom = nettoyer(colonnes[1]);
+    const message = nettoyer(colonnes[2]);
+    const photo = nettoyer(colonnes[3]);
+    const valide = nettoyer(colonnes[4]).toUpperCase();
 
     if(nom && message && valide === "OUI"){
-      resultats.push({nom, message});
+      resultats.push({nom, message, photo});
     }
   }
 
@@ -143,9 +178,15 @@ function afficher(messages){
 
   defilement.classList.remove("scroll");
   defilement.style.transform = "translateY(0)";
+  defilement.innerHTML = "";
 
   if(messages.length === 0){
-    defilement.innerHTML = "";
+    defilement.innerHTML = `
+      <div class="carte">
+        <div class="nom">Bienvenue</div>
+        <div class="message">Les messages validés apparaîtront ici.</div>
+      </div>
+    `;
     return;
   }
 
@@ -159,10 +200,10 @@ function afficher(messages){
       defilement.innerHTML = contenuSimple;
       defilement.classList.remove("scroll");
     }else{
-      defilement.innerHTML = contenuSimple + contenuSimple + contenuSimple;
+      defilement.innerHTML = contenuSimple + contenuSimple + contenuSimple + contenuSimple;
 
       const distance = hauteurContenu;
-      const duree = Math.max(40, messages.length * 6);
+      const duree = Math.max(50, messages.length * 6);
 
       defilement.style.setProperty("--distance", "-" + distance + "px");
       defilement.style.animationDuration = duree + "s";
