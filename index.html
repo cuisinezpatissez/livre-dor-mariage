@@ -8,56 +8,70 @@
 <style>
 body{
   margin:0;
-  min-height:100vh;
+  height:100vh;
   background:linear-gradient(135deg,#f8e7e7,#fff6f0);
   font-family:Georgia, serif;
   overflow:hidden;
 }
 
-h1{
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:145px;
+  background:linear-gradient(135deg,#f8e7e7,#fff6f0);
+  z-index:10;
   text-align:center;
+  box-shadow:0 10px 25px rgba(248,231,231,0.9);
+}
+
+h1{
   color:#c28b54;
   font-size:58px;
-  margin:28px 0 6px;
+  margin:28px 0 4px;
 }
 
 .sous-titre{
-  text-align:center;
   color:#8b5e3c;
   font-size:26px;
-  margin-bottom:24px;
 }
 
-#mur{
+#zone{
+  position:absolute;
+  top:150px;
+  left:0;
+  width:100%;
+  height:calc(100vh - 150px);
+  overflow:hidden;
+}
+
+#defilement{
+  position:absolute;
   width:92%;
-  height:76vh;
-  margin:auto;
-  display:grid;
-  grid-template-columns:repeat(2, 1fr);
-  grid-template-rows:repeat(4, 1fr);
-  gap:20px;
+  left:4%;
+  animation:scrollCinema linear infinite;
 }
 
 .carte{
   background:white;
   border-radius:24px;
-  padding:22px 26px;
+  padding:26px 34px;
+  margin-bottom:24px;
   box-shadow:0 10px 28px rgba(0,0,0,0.14);
-  animation:apparition 0.8s ease;
-  overflow:hidden;
 }
 
 .nom{
   color:#8b5e3c;
-  font-size:27px;
+  font-size:30px;
   font-weight:bold;
   margin-bottom:10px;
 }
 
 .message{
   color:#222;
-  font-size:28px;
-  line-height:1.25;
+  font-size:34px;
+  line-height:1.30;
 }
 
 .info{
@@ -67,25 +81,15 @@ h1{
   font-family:Arial, sans-serif;
   color:#9b7a66;
   font-size:15px;
+  z-index:20;
 }
 
-@keyframes apparition{
-  from{opacity:0; transform:translateY(18px);}
-  to{opacity:1; transform:translateY(0);}
-}
-
-@media (max-width:900px){
-  #mur{
-    grid-template-columns:1fr;
-    grid-template-rows:repeat(4, 1fr);
+@keyframes scrollCinema{
+  from{
+    transform:translateY(100vh);
   }
-
-  h1{
-    font-size:42px;
-  }
-
-  .message{
-    font-size:24px;
+  to{
+    transform:translateY(-100%);
   }
 }
 </style>
@@ -93,18 +97,19 @@ h1{
 
 <body>
 
-<h1>💗 Nathalie & Laurent 💗</h1>
-<div class="sous-titre">Livre d’or des invités</div>
+<header>
+  <h1>💗 Nathalie & Laurent 💗</h1>
+  <div class="sous-titre">Livre d’or des invités</div>
+</header>
 
-<div id="mur"></div>
+<div id="zone">
+  <div id="defilement"></div>
+</div>
+
 <div class="info" id="info"></div>
 
 <script>
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRjWC39iTfhs66h6IzggGiK4T7zCk1AECayVdBFRviG6zvofKjJUtqk2MTxy2jwRKCbB5VtSQpul0-F/pub?gid=0&single=true&output=csv";
-
-let tousLesMessages = [];
-let pageActuelle = 0;
-const messagesParPage = 8;
 
 function parserCSV(text){
   const lignes = text.trim().split(/\r?\n/);
@@ -122,65 +127,40 @@ function parserCSV(text){
     }
   }
 
-  return resultats.reverse();
+  return resultats;
 }
 
 async function chargerMessages(){
   try{
     const reponse = await fetch(CSV_URL + "&cache=" + Date.now());
     const texte = await reponse.text();
-    tousLesMessages = parserCSV(texte);
+    const messages = parserCSV(texte);
 
-    if(tousLesMessages.length > 0){
-      afficherPage();
-    }
+    const defilement = document.getElementById("defilement");
+    defilement.innerHTML = "";
+
+    messages.forEach(item => {
+      const carte = document.createElement("div");
+      carte.className = "carte";
+      carte.innerHTML = `
+        <div class="nom">${item.nom}</div>
+        <div class="message">“${item.message}”</div>
+      `;
+      defilement.appendChild(carte);
+    });
+
+    const duree = Math.max(45, messages.length * 8);
+    defilement.style.animationDuration = duree + "s";
 
     document.getElementById("info").innerText =
-      tousLesMessages.length + " message(s)";
+      messages.length + " message(s)";
   }catch(e){
     document.getElementById("info").innerText = "Erreur de chargement";
   }
 }
 
-function afficherPage(){
-  const mur = document.getElementById("mur");
-  mur.innerHTML = "";
-
-  if(tousLesMessages.length === 0){
-    mur.innerHTML = `
-      <div class="carte">
-        <div class="nom">Bienvenue</div>
-        <div class="message">Les messages apparaîtront ici.</div>
-      </div>
-    `;
-    return;
-  }
-
-  const debut = pageActuelle * messagesParPage;
-  const fin = debut + messagesParPage;
-  let groupe = tousLesMessages.slice(debut, fin);
-
-  groupe.forEach(item => {
-    const carte = document.createElement("div");
-    carte.className = "carte";
-    carte.innerHTML = `
-      <div class="nom">${item.nom}</div>
-      <div class="message">“${item.message}”</div>
-    `;
-    mur.appendChild(carte);
-  });
-
-  pageActuelle++;
-
-  if(pageActuelle * messagesParPage >= tousLesMessages.length){
-    pageActuelle = 0;
-  }
-}
-
 chargerMessages();
-
-setInterval(chargerMessages, 8000);
-setInterval(afficherPage, 10000);
+setInterval(chargerMessages, 30000);
 </script>
 
 </body>
