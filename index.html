@@ -5,94 +5,132 @@
 <title>Livre d'or</title>
 
 <style>
-
 body{
-    margin:0;
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:linear-gradient(135deg,#f8e7e7,#fff6f0);
-    font-family:Georgia;
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#f8e7e7,#fff6f0);
+  font-family:Georgia, serif;
+  overflow:hidden;
 }
 
 .carte{
-    width:70%;
-    padding:50px;
-    background:white;
-    border-radius:30px;
-    box-shadow:0 0 40px rgba(0,0,0,0.2);
-    text-align:center;
+  width:72%;
+  min-height:260px;
+  padding:55px;
+  background:white;
+  border-radius:30px;
+  box-shadow:0 0 45px rgba(0,0,0,0.20);
+  text-align:center;
+  transition:opacity 0.8s ease, transform 0.8s ease;
 }
 
 h1{
-    color:#c28b54;
-    font-size:50px;
+  color:#c28b54;
+  font-size:52px;
+  margin:0 0 35px 0;
 }
 
 .nom{
-    font-size:35px;
-    color:#8b5e3c;
-    margin-top:30px;
+  font-size:34px;
+  color:#8b5e3c;
+  margin-bottom:20px;
 }
 
 .message{
-    font-size:45px;
-    margin-top:20px;
-    color:#333;
+  font-size:44px;
+  line-height:1.25;
+  color:#222;
 }
 
-</style>
+.info{
+  position:fixed;
+  bottom:18px;
+  right:25px;
+  font-family:Arial, sans-serif;
+  font-size:16px;
+  color:#9b7a66;
+}
 
+.fade{
+  opacity:0;
+  transform:scale(0.96);
+}
+</style>
 </head>
 
 <body>
 
-<div class="carte">
-
-<h1>❤️ Quentin & Sophie ❤️</h1>
-
-<div class="nom" id="nom"></div>
-
-<div class="message" id="message"></div>
-
+<div class="carte" id="carte">
+  <h1>💗 Quentin & Sophie 💗</h1>
+  <div class="nom" id="nom">Chargement...</div>
+  <div class="message" id="message">Les messages vont apparaître ici.</div>
 </div>
 
+<div class="info" id="info"></div>
+
 <script>
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRjWC39iTfhs66h6IzggGiK4T7zCk1AECayVdBFRviG6zvofKjJUtqk2MTxy2jwRKCbB5VtSQpul0-F/pub?gid=0&single=true&output=csv";
 
-const messages = [
-{
-nom:"Quentin",
-message:"Merci à tous d'être présents ❤️"
-},
-{
-nom:"Marie",
-message:"Beaucoup de bonheur !"
-}
-];
+let messages = [];
+let index = 0;
 
-let i = 0;
+function parserCSV(text){
+  const lignes = text.trim().split(/\r?\n/);
+  const resultats = [];
 
-function afficher(){
+  for(let i = 1; i < lignes.length; i++){
+    const colonnes = lignes[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
+    const nom = (colonnes[0] || "").replace(/^"|"$/g,"").trim();
+    const message = (colonnes[1] || "").replace(/^"|"$/g,"").trim();
+    const valide = (colonnes[2] || "").replace(/^"|"$/g,"").trim().toUpperCase();
 
-document.getElementById("nom").innerHTML =
-messages[i].nom;
+    if(nom && message && valide === "OUI"){
+      resultats.push({nom, message});
+    }
+  }
 
-document.getElementById("message").innerHTML =
-messages[i].message;
-
-i++;
-
-if(i >= messages.length){
-    i = 0;
+  return resultats;
 }
 
+async function chargerMessages(){
+  try{
+    const reponse = await fetch(CSV_URL + "&cache=" + Date.now());
+    const texte = await reponse.text();
+    const nouveauxMessages = parserCSV(texte);
+
+    if(nouveauxMessages.length > 0){
+      messages = nouveauxMessages;
+      document.getElementById("info").innerText = messages.length + " message(s)";
+    }
+  }catch(e){
+    document.getElementById("info").innerText = "Erreur de chargement";
+  }
 }
 
-afficher();
+function afficherMessage(){
+  if(messages.length === 0) return;
 
-setInterval(afficher,7000);
+  const carte = document.getElementById("carte");
+  carte.classList.add("fade");
 
+  setTimeout(() => {
+    document.getElementById("nom").innerText = messages[index].nom;
+    document.getElementById("message").innerText = "“" + messages[index].message + "”";
+
+    index++;
+    if(index >= messages.length) index = 0;
+
+    carte.classList.remove("fade");
+  }, 800);
+}
+
+chargerMessages().then(afficherMessage);
+
+setInterval(chargerMessages, 10000);
+setInterval(afficherMessage, 7000);
 </script>
 
 </body>
