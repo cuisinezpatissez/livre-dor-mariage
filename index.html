@@ -56,15 +56,6 @@ h1{
   box-shadow:0 10px 28px rgba(0,0,0,0.14);
 }
 
-.photo{
-  width:100%;
-  max-height:420px;
-  object-fit:cover;
-  border-radius:18px;
-  margin-bottom:18px;
-  display:block;
-}
-
 .nom{
   color:#8b5e3c;
   font-size:30px;
@@ -159,35 +150,18 @@ function parserCSV(text){
 
     const nom = nettoyer(colonnes[1]);
     const message = nettoyer(colonnes[2]);
-    const photo = nettoyer(colonnes[3]);
-    const valide = nettoyer(colonnes[4]).toUpperCase();
 
-    if(nom && message && valide === "OUI"){
-      resultats.push({nom, message, photo});
+    if(nom && message){
+      resultats.push({nom, message});
     }
   }
 
   return resultats;
 }
 
-function convertirLienDrive(url){
-  if(!url) return "";
-
-  const match = url.match(/[-\w]{25,}/);
-
-  if(match){
-    return "https://drive.google.com/uc?export=view&id=" + match[0];
-  }
-
-  return url;
-}
-
 function carteHTML(item){
-  const imageURL = convertirLienDrive(item.photo);
-
   return `
     <div class="carte">
-      ${imageURL ? `<img class="photo" src="${imageURL}" alt="">` : ""}
       <div class="nom">${item.nom}</div>
       <div class="message">“${item.message}”</div>
     </div>
@@ -208,7 +182,7 @@ function afficher(messages){
     defilement.innerHTML = `
       <div class="carte">
         <div class="nom">Bienvenue</div>
-        <div class="message">Les messages validés apparaîtront ici.</div>
+        <div class="message">Les messages apparaîtront ici.</div>
       </div>
     `;
     return;
