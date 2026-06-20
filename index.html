@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Livre d'or</title>
+
+<style>
+
+body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#f8e7e7,#fff6f0);
+    font-family:Georgia;
+}
+
+.carte{
+    width:70%;
+    padding:50px;
+    background:white;
+    border-radius:30px;
+    box-shadow:0 0 40px rgba(0,0,0,0.2);
+    text-align:center;
+}
+
+h1{
+    color:#c28b54;
+    font-size:50px;
+}
+
+.nom{
+    font-size:35px;
+    color:#8b5e3c;
+    margin-top:30px;
+}
+
+.message{
+    font-size:45px;
+    margin-top:20px;
+    color:#333;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="carte">
+
+<h1>❤️ Quentin & Sophie ❤️</h1>
+
+<div class="nom" id="nom"></div>
+
+<div class="message" id="message"></div>
+
+</div>
+
+<script>
+
+const messages = [
+{
+nom:"Quentin",
+message:"Merci à tous d'être présents ❤️"
+},
+{
+nom:"Marie",
+message:"Beaucoup de bonheur !"
+}
+];
+
+let i = 0;
+
+function afficher(){
+
+document.getElementById("nom").innerHTML =
+messages[i].nom;
+
+document.getElementById("message").innerHTML =
+messages[i].message;
+
+i++;
+
+if(i >= messages.length){
+    i = 0;
+}
+
+}
+
+afficher();
+
+setInterval(afficher,7000);
+
+</script>
+
+</body>
+</html>
