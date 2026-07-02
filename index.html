@@ -1,503 +1,457 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex, nofollow">
-  <title>Livre d’or — Nathalie & Laurent</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Livre d'or — Nathalie & Laurent</title>
 
-  <style>
-    :root {
-      --fond-1: #f8e7e7;
-      --fond-2: #fff8f2;
-      --or: #bd8751;
-      --brun: #80583f;
-      --texte: #2d2926;
-      --carte: rgba(255, 255, 255, 0.94);
-      --hauteur-entete: 150px;
-      --fondu: 95px;
-    }
+<style>
+:root{
+  --fond1:#f8e7e7;
+  --fond2:#fff6f0;
+  --or:#c28b54;
+  --brun:#8b5e3c;
+  --texte:#222;
+  --entete:145px;
+}
 
-    * {
-      box-sizing: border-box;
-    }
+*{box-sizing:border-box}
 
-    html,
-    body {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-    }
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+}
 
-    body {
-      overflow: hidden;
-      background:
-        radial-gradient(circle at 20% 10%, rgba(255,255,255,.9), transparent 32%),
-        linear-gradient(135deg, var(--fond-1), var(--fond-2));
-      color: var(--texte);
-      font-family: Georgia, "Times New Roman", serif;
-    }
+body{
+  overflow:hidden;
+  background:linear-gradient(135deg,var(--fond1),var(--fond2));
+  font-family:Georgia,"Times New Roman",serif;
+}
 
-    header {
-      height: var(--hauteur-entete);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      position: relative;
-      z-index: 10;
-      background: linear-gradient(
-        to bottom,
-        rgba(255,248,242,.98),
-        rgba(248,231,231,.94)
-      );
-      box-shadow: 0 10px 30px rgba(111, 76, 65, .12);
-    }
+header{
+  height:var(--entete);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  background:linear-gradient(135deg,var(--fond1),var(--fond2));
+  box-shadow:0 10px 25px rgba(120,80,60,.12);
+  position:relative;
+  z-index:10;
+}
 
-    h1 {
-      margin: 0;
-      color: var(--or);
-      font-size: clamp(38px, 4vw, 64px);
-      line-height: 1;
-      font-weight: 700;
-      letter-spacing: .5px;
-      text-shadow: 0 2px 8px rgba(189, 135, 81, .14);
-    }
+h1{
+  color:var(--or);
+  font-size:clamp(40px,4vw,62px);
+  margin:0;
+  line-height:1;
+}
 
-    .sous-titre {
-      margin-top: 10px;
-      color: var(--brun);
-      font-size: clamp(20px, 1.8vw, 29px);
-    }
+.sous-titre{
+  color:var(--brun);
+  font-size:clamp(21px,1.8vw,28px);
+  margin-top:10px;
+}
 
-    #zone {
-      position: relative;
-      height: calc(100vh - var(--hauteur-entete));
-      overflow: hidden;
-      isolation: isolate;
-    }
+#zone{
+  height:calc(100vh - var(--entete));
+  overflow:hidden;
+  position:relative;
+}
 
-    #zone::before,
-    #zone::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      width: 100%;
-      height: var(--fondu);
-      z-index: 5;
-      pointer-events: none;
-    }
+#zone::before,
+#zone::after{
+  content:"";
+  position:absolute;
+  left:0;
+  width:100%;
+  height:85px;
+  z-index:5;
+  pointer-events:none;
+}
 
-    #zone::before {
-      top: 0;
-      background: linear-gradient(
-        to bottom,
-        rgba(248,231,231,1),
-        rgba(248,231,231,0)
-      );
-    }
+#zone::before{
+  top:0;
+  background:linear-gradient(to bottom,var(--fond1),transparent);
+}
 
-    #zone::after {
-      bottom: 0;
-      background: linear-gradient(
-        to top,
-        rgba(255,248,242,1),
-        rgba(255,248,242,0)
-      );
-    }
+#zone::after{
+  bottom:0;
+  background:linear-gradient(to top,var(--fond2),transparent);
+}
 
-    #defilement {
-      width: min(94%, 1500px);
-      margin: 0 auto;
-      will-change: transform;
-      transform: translate3d(0, 0, 0);
-    }
+#defilement{
+  width:min(94%,1500px);
+  margin:0 auto;
+  will-change:transform;
+  transform:translate3d(0,0,0);
+}
 
-    .groupe {
-      padding: 70px 0 90px;
-    }
+.groupe{
+  padding:45px 0 75px;
+}
 
-    .carte {
-      margin: 24px 0;
-      padding: 28px 38px;
-      border: 1px solid rgba(189, 135, 81, .10);
-      border-radius: 26px;
-      background: var(--carte);
-      box-shadow:
-        0 12px 34px rgba(72, 49, 40, .13),
-        inset 0 1px 0 rgba(255,255,255,.85);
-      backdrop-filter: blur(4px);
-    }
+.carte{
+  background:rgba(255,255,255,.96);
+  border-radius:24px;
+  padding:24px 34px;
+  margin:20px 0;
+  box-shadow:0 10px 28px rgba(0,0,0,.14);
+}
 
-    .nom {
-      margin-bottom: 9px;
-      color: var(--brun);
-      font-size: clamp(25px, 2vw, 34px);
-      line-height: 1.15;
-      font-weight: 700;
-    }
+.nom{
+  color:var(--brun);
+  font-size:clamp(26px,2vw,34px);
+  font-weight:bold;
+  margin-bottom:8px;
+}
 
-    .message {
-      color: var(--texte);
-      font-size: clamp(27px, 2.25vw, 39px);
-      line-height: 1.32;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
+.message{
+  color:var(--texte);
+  font-size:clamp(28px,2.25vw,39px);
+  line-height:1.28;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
 
-    .attente {
-      min-height: calc(100vh - var(--hauteur-entete));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 50px;
-      text-align: center;
-    }
+.attente{
+  height:calc(100vh - var(--entete));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:30px;
+}
 
-    .attente .carte {
-      width: min(900px, 94%);
-    }
+.attente .carte{
+  width:min(900px,95%);
+  text-align:center;
+}
 
-    .attente .nom {
-      font-size: clamp(32px, 3vw, 48px);
-    }
+/* Nouveau message affiché immédiatement */
+#nouveau-message{
+  position:fixed;
+  left:50%;
+  top:55%;
+  transform:translate(-50%,-50%) scale(.96);
+  width:min(88%,1100px);
+  z-index:50;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .35s ease, transform .35s ease;
+}
 
-    .attente .message {
-      font-size: clamp(24px, 2vw, 34px);
-    }
+#nouveau-message.visible{
+  opacity:1;
+  transform:translate(-50%,-50%) scale(1);
+}
 
-    .info {
-      position: fixed;
-      right: 20px;
-      bottom: 10px;
-      z-index: 20;
-      color: rgba(128, 88, 63, .72);
-      font-family: Arial, sans-serif;
-      font-size: 14px;
-    }
+#nouveau-message .carte{
+  border:2px solid rgba(194,139,84,.24);
+  box-shadow:0 18px 60px rgba(65,40,30,.30);
+}
 
-    .erreur {
-      color: #9e3838;
-    }
+.badge{
+  font-family:Arial,sans-serif;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  color:var(--or);
+  font-size:16px;
+  margin-bottom:12px;
+}
 
-    @media (max-width: 800px) {
-      :root {
-        --hauteur-entete: 125px;
-      }
+.info{
+  position:fixed;
+  bottom:10px;
+  right:22px;
+  font-family:Arial,sans-serif;
+  color:#9b7a66;
+  font-size:14px;
+  z-index:20;
+}
 
-      .carte {
-        padding: 22px 24px;
-        border-radius: 20px;
-      }
+.erreur{color:#a33}
 
-      .groupe {
-        padding: 55px 0 75px;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      #defilement {
-        transform: none !important;
-      }
-    }
-  </style>
+@media(max-width:800px){
+  :root{--entete:125px}
+  .carte{padding:21px 24px}
+}
+</style>
 </head>
 
 <body>
-  <header>
-    <h1>💗 Nathalie &amp; Laurent 💗</h1>
-    <div class="sous-titre">Livre d’or des invités</div>
-  </header>
 
-  <main id="zone" aria-live="polite">
-    <div id="defilement"></div>
-  </main>
+<header>
+  <h1>💗 Nathalie &amp; Laurent 💗</h1>
+  <div class="sous-titre">Livre d’or des invités</div>
+</header>
 
-  <div class="info" id="info">Chargement…</div>
+<div id="zone">
+  <div id="defilement"></div>
+</div>
 
-  <script>
-    /*
-      CONFIGURATION
-      --------------------------------------------------------------------
-      CSV_URL : URL CSV publiée par Google Sheets.
-      RAFRAICHISSEMENT_MS : délai de vérification des nouveaux messages.
-      MODERATION_ACTIVE :
-        - false = tous les messages valides sont affichés automatiquement ;
-        - true  = seuls ceux dont la colonne D contient OUI sont affichés.
-    */
+<div id="nouveau-message"></div>
+<div class="info" id="info">Chargement…</div>
 
-    const CSV_URL =
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vRjWC39iTfhs66h6IzggGiK4T7zCk1AECayVdBFRviG6zvofKjJUtqk2MTxy2jwRKCbB5VtSQpul0-F/pub?gid=0&single=true&output=csv";
+<script>
+const CSV_URL =
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vRjWC39iTfhs66h6IzggGiK4T7zCk1AECayVdBFRviG6zvofKjJUtqk2MTxy2jwRKCbB5VtSQpul0-F/pub?gid=1981975631&single=true&output=csv";
 
-    const RAFRAICHISSEMENT_MS = 10000;
-    const MODERATION_ACTIVE = false;
+/*
+  Vérification toutes les 2 secondes.
+  Google Sheets peut malgré tout mettre quelques secondes à republier le CSV.
+*/
+const RAFRAICHISSEMENT_MS = 2000;
+const DUREE_NOUVEAU_MESSAGE_MS = 9000;
+const MODERATION_ACTIVE = false;
 
-    const zone = document.getElementById("zone");
-    const defilement = document.getElementById("defilement");
-    const info = document.getElementById("info");
+const zone = document.getElementById("zone");
+const defilement = document.getElementById("defilement");
+const info = document.getElementById("info");
+const nouveauMessage = document.getElementById("nouveau-message");
 
-    let derniereSignature = "";
-    let animationId = null;
-    let positionY = 0;
-    let dernierTemps = null;
-    let hauteurBoucle = 0;
-    let vitessePixelsSeconde = 42;
+let derniereSignature = "";
+let nombrePrecedent = null;
+let animationId = null;
+let positionY = 0;
+let hauteurBoucle = 0;
+let dernierTemps = null;
+let vitesse = 38;
+let minuterieNouveauMessage = null;
 
-    function normaliser(valeur) {
-      return String(valeur ?? "").trim();
-    }
+function texte(value){
+  return String(value ?? "").trim();
+}
 
-    /*
-      Analyse tout le CSV caractère par caractère.
-      Cette méthode accepte :
-      - les virgules et points-virgules dans les messages ;
-      - les guillemets ;
-      - les retours à la ligne dans un message.
-    */
-    function parserCSV(texte) {
-      const lignes = [];
-      let ligne = [];
-      let cellule = "";
-      let entreGuillemets = false;
+function parserCSV(csv){
+  const lignes = [];
+  let ligne = [];
+  let cellule = "";
+  let dansGuillemets = false;
 
-      for (let i = 0; i < texte.length; i++) {
-        const caractere = texte[i];
-        const suivant = texte[i + 1];
+  for(let i=0;i<csv.length;i++){
+    const c = csv[i];
+    const suivant = csv[i+1];
 
-        if (caractere === '"') {
-          if (entreGuillemets && suivant === '"') {
-            cellule += '"';
-            i++;
-          } else {
-            entreGuillemets = !entreGuillemets;
-          }
-          continue;
-        }
-
-        if (!entreGuillemets && caractere === ",") {
-          ligne.push(cellule);
-          cellule = "";
-          continue;
-        }
-
-        if (!entreGuillemets && (caractere === "\n" || caractere === "\r")) {
-          if (caractere === "\r" && suivant === "\n") {
-            i++;
-          }
-
-          ligne.push(cellule);
-          cellule = "";
-
-          if (ligne.some(valeur => normaliser(valeur) !== "")) {
-            lignes.push(ligne);
-          }
-
-          ligne = [];
-          continue;
-        }
-
-        cellule += caractere;
+    if(c === '"'){
+      if(dansGuillemets && suivant === '"'){
+        cellule += '"';
+        i++;
+      }else{
+        dansGuillemets = !dansGuillemets;
       }
-
+    }else if(c === "," && !dansGuillemets){
       ligne.push(cellule);
+      cellule = "";
+    }else if((c === "\n" || c === "\r") && !dansGuillemets){
+      if(c === "\r" && suivant === "\n") i++;
+      ligne.push(cellule);
+      cellule = "";
 
-      if (ligne.some(valeur => normaliser(valeur) !== "")) {
+      if(ligne.some(v => texte(v) !== "")){
         lignes.push(ligne);
       }
+      ligne = [];
+    }else{
+      cellule += c;
+    }
+  }
 
-      if (lignes.length <= 1) {
-        return [];
-      }
+  ligne.push(cellule);
+  if(ligne.some(v => texte(v) !== "")){
+    lignes.push(ligne);
+  }
 
-      return lignes.slice(1)
-        .map(colonnes => ({
-          nom: normaliser(colonnes[1]),
-          message: normaliser(colonnes[2]),
-          validation: normaliser(colonnes[3]).toUpperCase()
-        }))
-        .filter(item => {
-          if (!item.nom || !item.message) {
-            return false;
-          }
+  return lignes.slice(1)
+    .map(cols => ({
+      nom: texte(cols[1]),
+      message: texte(cols[2]),
+      validation: texte(cols[3]).toUpperCase()
+    }))
+    .filter(item =>
+      item.nom &&
+      item.message &&
+      (!MODERATION_ACTIVE || item.validation === "OUI")
+    );
+}
 
-          return !MODERATION_ACTIVE || item.validation === "OUI";
-        });
+function creerCarte(item){
+  const carte = document.createElement("article");
+  carte.className = "carte";
+
+  const nom = document.createElement("div");
+  nom.className = "nom";
+  nom.textContent = item.nom;
+
+  const message = document.createElement("div");
+  message.className = "message";
+  message.textContent = `“${item.message}”`;
+
+  carte.append(nom,message);
+  return carte;
+}
+
+function creerGroupe(messages){
+  const groupe = document.createElement("section");
+  groupe.className = "groupe";
+
+  messages.forEach(item => groupe.appendChild(creerCarte(item)));
+  return groupe;
+}
+
+function arreterAnimation(){
+  if(animationId !== null){
+    cancelAnimationFrame(animationId);
+  }
+  animationId = null;
+  dernierTemps = null;
+}
+
+function animer(temps){
+  if(dernierTemps === null) dernierTemps = temps;
+
+  const delta = Math.min((temps - dernierTemps) / 1000, .1);
+  dernierTemps = temps;
+  positionY -= vitesse * delta;
+
+  /*
+    Correction essentielle :
+    on ne teste plus Math.abs(positionY).
+    La boucle revient au début uniquement quand le premier groupe
+    est entièrement sorti vers le haut.
+  */
+  if(positionY <= -hauteurBoucle){
+    positionY += hauteurBoucle;
+  }
+
+  defilement.style.transform =
+    `translate3d(0,${positionY.toFixed(2)}px,0)`;
+
+  animationId = requestAnimationFrame(animer);
+}
+
+function afficherAttente(){
+  arreterAnimation();
+  positionY = 0;
+  defilement.style.transform = "translate3d(0,0,0)";
+  defilement.replaceChildren();
+
+  const bloc = document.createElement("div");
+  bloc.className = "attente";
+
+  const carte = document.createElement("div");
+  carte.className = "carte";
+
+  const nom = document.createElement("div");
+  nom.className = "nom";
+  nom.textContent = "Bienvenue à notre mariage";
+
+  const message = document.createElement("div");
+  message.className = "message";
+  message.textContent =
+    "Scannez le QR code et écrivez-nous un message. Il apparaîtra bientôt sur cet écran.";
+
+  carte.append(nom,message);
+  bloc.appendChild(carte);
+  defilement.appendChild(bloc);
+}
+
+function afficher(messages){
+  arreterAnimation();
+  positionY = 0;
+  defilement.style.transform = "translate3d(0,0,0)";
+  defilement.replaceChildren();
+
+  if(messages.length === 0){
+    afficherAttente();
+    return;
+  }
+
+  const groupe1 = creerGroupe(messages);
+  const groupe2 = creerGroupe(messages);
+  groupe2.setAttribute("aria-hidden","true");
+
+  defilement.append(groupe1,groupe2);
+
+  requestAnimationFrame(() => {
+    hauteurBoucle = groupe1.getBoundingClientRect().height;
+    vitesse = Math.min(55, Math.max(32, 34 + messages.length * .7));
+
+    /*
+      Le contenu démarre visible immédiatement.
+      Il ne commence plus sous l'écran.
+    */
+    positionY = 0;
+    dernierTemps = null;
+    animationId = requestAnimationFrame(animer);
+  });
+}
+
+function afficherNouveauMessage(item){
+  if(!item) return;
+
+  clearTimeout(minuterieNouveauMessage);
+  nouveauMessage.replaceChildren();
+
+  const carte = creerCarte(item);
+  const badge = document.createElement("div");
+  badge.className = "badge";
+  badge.textContent = "Nouveau message";
+  carte.prepend(badge);
+
+  nouveauMessage.appendChild(carte);
+  nouveauMessage.classList.add("visible");
+
+  minuterieNouveauMessage = setTimeout(() => {
+    nouveauMessage.classList.remove("visible");
+  }, DUREE_NOUVEAU_MESSAGE_MS);
+}
+
+async function chargerMessages(){
+  try{
+    const separateur = CSV_URL.includes("?") ? "&" : "?";
+    const reponse = await fetch(
+      CSV_URL + separateur + "cache=" + Date.now(),
+      {cache:"no-store"}
+    );
+
+    if(!reponse.ok){
+      throw new Error("HTTP " + reponse.status);
     }
 
-    function creerCarte(item) {
-      const carte = document.createElement("article");
-      carte.className = "carte";
+    const csv = await reponse.text();
+    const messages = parserCSV(csv);
+    const signature = JSON.stringify(messages);
 
-      const nom = document.createElement("div");
-      nom.className = "nom";
-      nom.textContent = item.nom;
-
-      const message = document.createElement("div");
-      message.className = "message";
-      message.textContent = `“${item.message}”`;
-
-      carte.append(nom, message);
-      return carte;
-    }
-
-    function creerGroupe(messages) {
-      const groupe = document.createElement("section");
-      groupe.className = "groupe";
-
-      for (const item of messages) {
-        groupe.appendChild(creerCarte(item));
-      }
-
-      return groupe;
-    }
-
-    function arreterAnimation() {
-      if (animationId !== null) {
-        cancelAnimationFrame(animationId);
-      }
-
-      animationId = null;
-      dernierTemps = null;
-    }
-
-    function animer(temps) {
-      if (dernierTemps === null) {
-        dernierTemps = temps;
-      }
-
-      const deltaSecondes = Math.min((temps - dernierTemps) / 1000, 0.1);
-      dernierTemps = temps;
-
-      positionY -= vitessePixelsSeconde * deltaSecondes;
-
-      if (Math.abs(positionY) >= hauteurBoucle) {
-        positionY += hauteurBoucle;
-      }
-
-      defilement.style.transform =
-        `translate3d(0, ${positionY.toFixed(2)}px, 0)`;
-
-      animationId = requestAnimationFrame(animer);
-    }
-
-    function afficherAttente() {
-      arreterAnimation();
-      positionY = 0;
-      defilement.style.transform = "translate3d(0,0,0)";
-      defilement.replaceChildren();
-
-      const attente = document.createElement("section");
-      attente.className = "attente";
-
-      const carte = document.createElement("article");
-      carte.className = "carte";
-
-      const nom = document.createElement("div");
-      nom.className = "nom";
-      nom.textContent = "Bienvenue à notre mariage";
-
-      const message = document.createElement("div");
-      message.className = "message";
-      message.textContent =
-        "Scannez le QR code, écrivez votre message et retrouvez-le bientôt sur cet écran.";
-
-      carte.append(nom, message);
-      attente.appendChild(carte);
-      defilement.appendChild(attente);
-    }
-
-    function afficher(messages) {
-      arreterAnimation();
-      positionY = 0;
-      defilement.style.transform = "translate3d(0,0,0)";
-      defilement.replaceChildren();
-
-      if (messages.length === 0) {
-        afficherAttente();
-        return;
-      }
-
-      const premierGroupe = creerGroupe(messages);
-      defilement.appendChild(premierGroupe);
-
+    if(signature !== derniereSignature){
       /*
-        Une copie identique est placée à la suite de la première.
-        Quand la première copie est entièrement sortie, la position revient
-        au début de façon invisible : la boucle paraît continue.
+        Lorsqu'un nouveau message est ajouté après le premier chargement,
+        il apparaît immédiatement au centre pendant 9 secondes.
       */
-      const secondGroupe = creerGroupe(messages);
-      secondGroupe.setAttribute("aria-hidden", "true");
-      defilement.appendChild(secondGroupe);
-
-      requestAnimationFrame(() => {
-        hauteurBoucle = premierGroupe.getBoundingClientRect().height;
-
-        /*
-          La vitesse reste confortable, même avec beaucoup de messages.
-          Un grand nombre de messages accélère légèrement la boucle, sans
-          rendre la lecture difficile.
-        */
-        vitessePixelsSeconde = Math.min(
-          58,
-          Math.max(34, 34 + messages.length * 0.8)
-        );
-
-        /*
-          Le premier contenu démarre sous l'écran afin de produire un effet
-          de véritable générique de fin.
-        */
-        positionY = zone.clientHeight;
-        dernierTemps = null;
-        animationId = requestAnimationFrame(animer);
-      });
-    }
-
-    async function chargerMessages() {
-      try {
-        const separateur = CSV_URL.includes("?") ? "&" : "?";
-        const urlSansCache =
-          `${CSV_URL}${separateur}cache=${Date.now()}`;
-
-        const reponse = await fetch(urlSansCache, {
-          method: "GET",
-          cache: "no-store"
-        });
-
-        if (!reponse.ok) {
-          throw new Error(`Erreur HTTP ${reponse.status}`);
-        }
-
-        const texte = await reponse.text();
-        const messages = parserCSV(texte);
-        const signature = JSON.stringify(messages);
-
-        if (signature !== derniereSignature) {
-          derniereSignature = signature;
-          afficher(messages);
-        }
-
-        info.classList.remove("erreur");
-        info.textContent =
-          `${messages.length} message${messages.length > 1 ? "s" : ""}`;
-      } catch (erreur) {
-        console.error(erreur);
-        info.classList.add("erreur");
-        info.textContent = "Connexion aux messages impossible";
+      if(nombrePrecedent !== null && messages.length > nombrePrecedent){
+        afficherNouveauMessage(messages[messages.length - 1]);
       }
+
+      nombrePrecedent = messages.length;
+      derniereSignature = signature;
+      afficher(messages);
     }
 
-    window.addEventListener("resize", () => {
-      /*
-        Le prochain chargement reconstruit la boucle avec les nouvelles
-        dimensions. On force ici la mise à jour.
-      */
-      derniereSignature = "";
-      chargerMessages();
-    });
+    info.classList.remove("erreur");
+    info.textContent =
+      messages.length + " message" + (messages.length > 1 ? "s" : "");
+  }catch(erreur){
+    console.error(erreur);
+    info.classList.add("erreur");
+    info.textContent = "Erreur de chargement";
+  }
+}
 
-    chargerMessages();
-    setInterval(chargerMessages, RAFRAICHISSEMENT_MS);
-  </script>
+chargerMessages();
+setInterval(chargerMessages, RAFRAICHISSEMENT_MS);
+</script>
+
 </body>
 </html>
