@@ -1,457 +1,720 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
-<title>Livre d'or — Nathalie & Laurent</title>
+  <meta charset="UTF-8">
 
-<style>
-:root{
-  --fond1:#f8e7e7;
-  --fond2:#fff6f0;
-  --or:#c28b54;
-  --brun:#8b5e3c;
-  --texte:#222;
-  --entete:145px;
-}
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
 
-*{box-sizing:border-box}
+  <meta name="robots" content="noindex, nofollow">
 
-html,body{
-  margin:0;
-  width:100%;
-  height:100%;
-}
+  <title>Livre d’or — Nathalie & Laurent</title>
 
-body{
-  overflow:hidden;
-  background:linear-gradient(135deg,var(--fond1),var(--fond2));
-  font-family:Georgia,"Times New Roman",serif;
-}
+  <style>
+    :root {
+      --fond-1: #f8e7e7;
+      --fond-2: #fff6f0;
+      --or: #c28b54;
+      --brun: #8b5e3c;
+      --texte: #222222;
+      --entete: 145px;
+    }
 
-header{
-  height:var(--entete);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  background:linear-gradient(135deg,var(--fond1),var(--fond2));
-  box-shadow:0 10px 25px rgba(120,80,60,.12);
-  position:relative;
-  z-index:10;
-}
+    * {
+      box-sizing: border-box;
+    }
 
-h1{
-  color:var(--or);
-  font-size:clamp(40px,4vw,62px);
-  margin:0;
-  line-height:1;
-}
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+    }
 
-.sous-titre{
-  color:var(--brun);
-  font-size:clamp(21px,1.8vw,28px);
-  margin-top:10px;
-}
+    body {
+      overflow: hidden;
+      background: linear-gradient(
+        135deg,
+        var(--fond-1),
+        var(--fond-2)
+      );
+      font-family: Georgia, "Times New Roman", serif;
+    }
 
-#zone{
-  height:calc(100vh - var(--entete));
-  overflow:hidden;
-  position:relative;
-}
+    header {
+      position: relative;
+      z-index: 10;
 
-#zone::before,
-#zone::after{
-  content:"";
-  position:absolute;
-  left:0;
-  width:100%;
-  height:85px;
-  z-index:5;
-  pointer-events:none;
-}
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
 
-#zone::before{
-  top:0;
-  background:linear-gradient(to bottom,var(--fond1),transparent);
-}
+      height: var(--entete);
 
-#zone::after{
-  bottom:0;
-  background:linear-gradient(to top,var(--fond2),transparent);
-}
+      text-align: center;
 
-#defilement{
-  width:min(94%,1500px);
-  margin:0 auto;
-  will-change:transform;
-  transform:translate3d(0,0,0);
-}
+      background: linear-gradient(
+        135deg,
+        var(--fond-1),
+        var(--fond-2)
+      );
 
-.groupe{
-  padding:45px 0 75px;
-}
+      box-shadow: 0 10px 25px rgba(120, 80, 60, 0.12);
+    }
 
-.carte{
-  background:rgba(255,255,255,.96);
-  border-radius:24px;
-  padding:24px 34px;
-  margin:20px 0;
-  box-shadow:0 10px 28px rgba(0,0,0,.14);
-}
+    h1 {
+      margin: 0;
 
-.nom{
-  color:var(--brun);
-  font-size:clamp(26px,2vw,34px);
-  font-weight:bold;
-  margin-bottom:8px;
-}
+      color: var(--or);
 
-.message{
-  color:var(--texte);
-  font-size:clamp(28px,2.25vw,39px);
-  line-height:1.28;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-}
+      font-size: clamp(40px, 4vw, 62px);
+      line-height: 1;
+    }
 
-.attente{
-  height:calc(100vh - var(--entete));
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:30px;
-}
+    .sous-titre {
+      margin-top: 10px;
 
-.attente .carte{
-  width:min(900px,95%);
-  text-align:center;
-}
+      color: var(--brun);
 
-/* Nouveau message affiché immédiatement */
-#nouveau-message{
-  position:fixed;
-  left:50%;
-  top:55%;
-  transform:translate(-50%,-50%) scale(.96);
-  width:min(88%,1100px);
-  z-index:50;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .35s ease, transform .35s ease;
-}
+      font-size: clamp(21px, 1.8vw, 28px);
+    }
 
-#nouveau-message.visible{
-  opacity:1;
-  transform:translate(-50%,-50%) scale(1);
-}
+    #zone {
+      position: relative;
 
-#nouveau-message .carte{
-  border:2px solid rgba(194,139,84,.24);
-  box-shadow:0 18px 60px rgba(65,40,30,.30);
-}
+      height: calc(100vh - var(--entete));
 
-.badge{
-  font-family:Arial,sans-serif;
-  text-transform:uppercase;
-  letter-spacing:2px;
-  color:var(--or);
-  font-size:16px;
-  margin-bottom:12px;
-}
+      overflow: hidden;
+    }
 
-.info{
-  position:fixed;
-  bottom:10px;
-  right:22px;
-  font-family:Arial,sans-serif;
-  color:#9b7a66;
-  font-size:14px;
-  z-index:20;
-}
+    #zone::before,
+    #zone::after {
+      content: "";
 
-.erreur{color:#a33}
+      position: absolute;
+      left: 0;
+      z-index: 5;
 
-@media(max-width:800px){
-  :root{--entete:125px}
-  .carte{padding:21px 24px}
-}
-</style>
+      width: 100%;
+      height: 85px;
+
+      pointer-events: none;
+    }
+
+    #zone::before {
+      top: 0;
+
+      background: linear-gradient(
+        to bottom,
+        var(--fond-1),
+        transparent
+      );
+    }
+
+    #zone::after {
+      bottom: 0;
+
+      background: linear-gradient(
+        to top,
+        var(--fond-2),
+        transparent
+      );
+    }
+
+    #defilement {
+      width: min(94%, 1500px);
+      margin: 0 auto;
+
+      will-change: transform;
+
+      transform: translate3d(0, 0, 0);
+    }
+
+    .groupe {
+      padding: 45px 0 75px;
+    }
+
+    .carte {
+      margin: 20px 0;
+      padding: 24px 34px;
+
+      background: rgba(255, 255, 255, 0.96);
+
+      border-radius: 24px;
+
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.14);
+    }
+
+    .nom {
+      margin-bottom: 8px;
+
+      color: var(--brun);
+
+      font-size: clamp(26px, 2vw, 34px);
+      font-weight: bold;
+    }
+
+    .message {
+      color: var(--texte);
+
+      font-size: clamp(28px, 2.25vw, 39px);
+      line-height: 1.28;
+
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .attente {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      height: calc(100vh - var(--entete));
+
+      padding: 30px;
+    }
+
+    .attente .carte {
+      width: min(900px, 95%);
+
+      text-align: center;
+    }
+
+    #nouveau-message {
+      position: fixed;
+      top: 55%;
+      left: 50%;
+      z-index: 50;
+
+      width: min(88%, 1100px);
+
+      opacity: 0;
+
+      pointer-events: none;
+
+      transform: translate(-50%, -50%) scale(0.96);
+
+      transition:
+        opacity 0.35s ease,
+        transform 0.35s ease;
+    }
+
+    #nouveau-message.visible {
+      opacity: 1;
+
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    #nouveau-message .carte {
+      border: 2px solid rgba(194, 139, 84, 0.24);
+
+      box-shadow: 0 18px 60px rgba(65, 40, 30, 0.30);
+    }
+
+    .badge {
+      margin-bottom: 12px;
+
+      color: var(--or);
+
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .info {
+      position: fixed;
+      right: 22px;
+      bottom: 10px;
+      z-index: 20;
+
+      color: #9b7a66;
+
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+    }
+
+    .erreur {
+      color: #a33a3a;
+    }
+
+    @media (max-width: 800px) {
+      :root {
+        --entete: 125px;
+      }
+
+      .carte {
+        padding: 21px 24px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<header>
-  <h1>💗 Nathalie &amp; Laurent 💗</h1>
-  <div class="sous-titre">Livre d’or des invités</div>
-</header>
+  <header>
+    <h1>💗 Nathalie &amp; Laurent 💗</h1>
 
-<div id="zone">
-  <div id="defilement"></div>
-</div>
+    <div class="sous-titre">
+      Livre d’or des invités
+    </div>
+  </header>
 
-<div id="nouveau-message"></div>
-<div class="info" id="info">Chargement…</div>
+  <main id="zone">
+    <div id="defilement"></div>
+  </main>
 
-<script>
-const CSV_URL =
-"https://docs.google.com/spreadsheets/d/e/2PACX-1vRjWC39iTfhs66h6IzggGiK4T7zCk1AECayVdBFRviG6zvofKjJUtqk2MTxy2jwRKCbB5VtSQpul0-F/pub?gid=1981975631&single=true&output=csv";
+  <div id="nouveau-message"></div>
 
-/*
-  Vérification toutes les 2 secondes.
-  Google Sheets peut malgré tout mettre quelques secondes à republier le CSV.
-*/
-const RAFRAICHISSEMENT_MS = 2000;
-const DUREE_NOUVEAU_MESSAGE_MS = 9000;
-const MODERATION_ACTIVE = false;
+  <div class="info" id="info">
+    Chargement…
+  </div>
 
-const zone = document.getElementById("zone");
-const defilement = document.getElementById("defilement");
-const info = document.getElementById("info");
-const nouveauMessage = document.getElementById("nouveau-message");
-
-let derniereSignature = "";
-let nombrePrecedent = null;
-let animationId = null;
-let positionY = 0;
-let hauteurBoucle = 0;
-let dernierTemps = null;
-let vitesse = 38;
-let minuterieNouveauMessage = null;
-
-function texte(value){
-  return String(value ?? "").trim();
-}
-
-function parserCSV(csv){
-  const lignes = [];
-  let ligne = [];
-  let cellule = "";
-  let dansGuillemets = false;
-
-  for(let i=0;i<csv.length;i++){
-    const c = csv[i];
-    const suivant = csv[i+1];
-
-    if(c === '"'){
-      if(dansGuillemets && suivant === '"'){
-        cellule += '"';
-        i++;
-      }else{
-        dansGuillemets = !dansGuillemets;
-      }
-    }else if(c === "," && !dansGuillemets){
-      ligne.push(cellule);
-      cellule = "";
-    }else if((c === "\n" || c === "\r") && !dansGuillemets){
-      if(c === "\r" && suivant === "\n") i++;
-      ligne.push(cellule);
-      cellule = "";
-
-      if(ligne.some(v => texte(v) !== "")){
-        lignes.push(ligne);
-      }
-      ligne = [];
-    }else{
-      cellule += c;
-    }
-  }
-
-  ligne.push(cellule);
-  if(ligne.some(v => texte(v) !== "")){
-    lignes.push(ligne);
-  }
-
-  return lignes.slice(1)
-    .map(cols => ({
-      nom: texte(cols[1]),
-      message: texte(cols[2]),
-      validation: texte(cols[3]).toUpperCase()
-    }))
-    .filter(item =>
-      item.nom &&
-      item.message &&
-      (!MODERATION_ACTIVE || item.validation === "OUI")
-    );
-}
-
-function creerCarte(item){
-  const carte = document.createElement("article");
-  carte.className = "carte";
-
-  const nom = document.createElement("div");
-  nom.className = "nom";
-  nom.textContent = item.nom;
-
-  const message = document.createElement("div");
-  message.className = "message";
-  message.textContent = `“${item.message}”`;
-
-  carte.append(nom,message);
-  return carte;
-}
-
-function creerGroupe(messages){
-  const groupe = document.createElement("section");
-  groupe.className = "groupe";
-
-  messages.forEach(item => groupe.appendChild(creerCarte(item)));
-  return groupe;
-}
-
-function arreterAnimation(){
-  if(animationId !== null){
-    cancelAnimationFrame(animationId);
-  }
-  animationId = null;
-  dernierTemps = null;
-}
-
-function animer(temps){
-  if(dernierTemps === null) dernierTemps = temps;
-
-  const delta = Math.min((temps - dernierTemps) / 1000, .1);
-  dernierTemps = temps;
-  positionY -= vitesse * delta;
-
-  /*
-    Correction essentielle :
-    on ne teste plus Math.abs(positionY).
-    La boucle revient au début uniquement quand le premier groupe
-    est entièrement sorti vers le haut.
-  */
-  if(positionY <= -hauteurBoucle){
-    positionY += hauteurBoucle;
-  }
-
-  defilement.style.transform =
-    `translate3d(0,${positionY.toFixed(2)}px,0)`;
-
-  animationId = requestAnimationFrame(animer);
-}
-
-function afficherAttente(){
-  arreterAnimation();
-  positionY = 0;
-  defilement.style.transform = "translate3d(0,0,0)";
-  defilement.replaceChildren();
-
-  const bloc = document.createElement("div");
-  bloc.className = "attente";
-
-  const carte = document.createElement("div");
-  carte.className = "carte";
-
-  const nom = document.createElement("div");
-  nom.className = "nom";
-  nom.textContent = "Bienvenue à notre mariage";
-
-  const message = document.createElement("div");
-  message.className = "message";
-  message.textContent =
-    "Scannez le QR code et écrivez-nous un message. Il apparaîtra bientôt sur cet écran.";
-
-  carte.append(nom,message);
-  bloc.appendChild(carte);
-  defilement.appendChild(bloc);
-}
-
-function afficher(messages){
-  arreterAnimation();
-  positionY = 0;
-  defilement.style.transform = "translate3d(0,0,0)";
-  defilement.replaceChildren();
-
-  if(messages.length === 0){
-    afficherAttente();
-    return;
-  }
-
-  const groupe1 = creerGroupe(messages);
-  const groupe2 = creerGroupe(messages);
-  groupe2.setAttribute("aria-hidden","true");
-
-  defilement.append(groupe1,groupe2);
-
-  requestAnimationFrame(() => {
-    hauteurBoucle = groupe1.getBoundingClientRect().height;
-    vitesse = Math.min(55, Math.max(32, 34 + messages.length * .7));
+  <script>
+    const CSV_URL =
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vRjWC39iTfhs66h6IzggGiK4T7zCk1AECayVdBFRviG6zvofKjJUtqk2MTxy2jwRKCbB5VtSQpul0-F/pub?gid=1981975631&single=true&output=csv";
 
     /*
-      Le contenu démarre visible immédiatement.
-      Il ne commence plus sous l'écran.
+      La page vérifie la feuille toutes les 2 secondes.
     */
-    positionY = 0;
-    dernierTemps = null;
-    animationId = requestAnimationFrame(animer);
-  });
-}
+    const RAFRAICHISSEMENT_MS = 2000;
 
-function afficherNouveauMessage(item){
-  if(!item) return;
+    /*
+      Le nouveau message reste affiché au centre pendant 9 secondes.
+    */
+    const DUREE_NOUVEAU_MESSAGE_MS = 9000;
 
-  clearTimeout(minuterieNouveauMessage);
-  nouveauMessage.replaceChildren();
+    /*
+      false = affichage automatique de tous les messages.
+      true = affichage uniquement si la colonne D contient OUI.
+    */
+    const MODERATION_ACTIVE = false;
 
-  const carte = creerCarte(item);
-  const badge = document.createElement("div");
-  badge.className = "badge";
-  badge.textContent = "Nouveau message";
-  carte.prepend(badge);
+    const zone =
+      document.getElementById("zone");
 
-  nouveauMessage.appendChild(carte);
-  nouveauMessage.classList.add("visible");
+    const defilement =
+      document.getElementById("defilement");
 
-  minuterieNouveauMessage = setTimeout(() => {
-    nouveauMessage.classList.remove("visible");
-  }, DUREE_NOUVEAU_MESSAGE_MS);
-}
+    const info =
+      document.getElementById("info");
 
-async function chargerMessages(){
-  try{
-    const separateur = CSV_URL.includes("?") ? "&" : "?";
-    const reponse = await fetch(
-      CSV_URL + separateur + "cache=" + Date.now(),
-      {cache:"no-store"}
-    );
+    const nouveauMessage =
+      document.getElementById("nouveau-message");
 
-    if(!reponse.ok){
-      throw new Error("HTTP " + reponse.status);
+    let derniereSignature = "";
+    let nombrePrecedent = null;
+
+    let animationId = null;
+    let positionY = 0;
+    let hauteurBoucle = 0;
+    let dernierTemps = null;
+    let vitesse = 38;
+
+    let minuterieNouveauMessage = null;
+
+    function nettoyerTexte(valeur) {
+      return String(valeur ?? "").trim();
     }
 
-    const csv = await reponse.text();
-    const messages = parserCSV(csv);
-    const signature = JSON.stringify(messages);
+    function parserCSV(csv) {
+      const lignes = [];
 
-    if(signature !== derniereSignature){
-      /*
-        Lorsqu'un nouveau message est ajouté après le premier chargement,
-        il apparaît immédiatement au centre pendant 9 secondes.
-      */
-      if(nombrePrecedent !== null && messages.length > nombrePrecedent){
-        afficherNouveauMessage(messages[messages.length - 1]);
+      let ligne = [];
+      let cellule = "";
+      let dansGuillemets = false;
+
+      for (let i = 0; i < csv.length; i++) {
+        const caractere = csv[i];
+        const suivant = csv[i + 1];
+
+        if (caractere === '"') {
+          if (dansGuillemets && suivant === '"') {
+            cellule += '"';
+            i++;
+          } else {
+            dansGuillemets = !dansGuillemets;
+          }
+
+          continue;
+        }
+
+        if (
+          caractere === "," &&
+          !dansGuillemets
+        ) {
+          ligne.push(cellule);
+          cellule = "";
+
+          continue;
+        }
+
+        if (
+          (
+            caractere === "\n" ||
+            caractere === "\r"
+          ) &&
+          !dansGuillemets
+        ) {
+          if (
+            caractere === "\r" &&
+            suivant === "\n"
+          ) {
+            i++;
+          }
+
+          ligne.push(cellule);
+          cellule = "";
+
+          const ligneNonVide =
+            ligne.some(
+              valeur => nettoyerTexte(valeur) !== ""
+            );
+
+          if (ligneNonVide) {
+            lignes.push(ligne);
+          }
+
+          ligne = [];
+
+          continue;
+        }
+
+        cellule += caractere;
       }
 
-      nombrePrecedent = messages.length;
-      derniereSignature = signature;
-      afficher(messages);
+      ligne.push(cellule);
+
+      const derniereLigneNonVide =
+        ligne.some(
+          valeur => nettoyerTexte(valeur) !== ""
+        );
+
+      if (derniereLigneNonVide) {
+        lignes.push(ligne);
+      }
+
+      /*
+        On retire la première ligne, qui contient les titres.
+      */
+      return lignes
+        .slice(1)
+        .map(colonnes => {
+          return {
+            nom: nettoyerTexte(colonnes[1]),
+            message: nettoyerTexte(colonnes[2]),
+            validation:
+              nettoyerTexte(colonnes[3]).toUpperCase()
+          };
+        })
+        .filter(item => {
+          if (!item.nom || !item.message) {
+            return false;
+          }
+
+          if (
+            MODERATION_ACTIVE &&
+            item.validation !== "OUI"
+          ) {
+            return false;
+          }
+
+          return true;
+        });
     }
 
-    info.classList.remove("erreur");
-    info.textContent =
-      messages.length + " message" + (messages.length > 1 ? "s" : "");
-  }catch(erreur){
-    console.error(erreur);
-    info.classList.add("erreur");
-    info.textContent = "Erreur de chargement";
-  }
-}
+    function creerCarte(item) {
+      const carte =
+        document.createElement("article");
 
-chargerMessages();
-setInterval(chargerMessages, RAFRAICHISSEMENT_MS);
-</script>
+      carte.className = "carte";
+
+      const nom =
+        document.createElement("div");
+
+      nom.className = "nom";
+      nom.textContent = item.nom;
+
+      const message =
+        document.createElement("div");
+
+      message.className = "message";
+      message.textContent =
+        `“${item.message}”`;
+
+      carte.append(nom, message);
+
+      return carte;
+    }
+
+    function creerGroupe(messages) {
+      const groupe =
+        document.createElement("section");
+
+      groupe.className = "groupe";
+
+      messages.forEach(item => {
+        groupe.appendChild(
+          creerCarte(item)
+        );
+      });
+
+      return groupe;
+    }
+
+    function arreterAnimation() {
+      if (animationId !== null) {
+        cancelAnimationFrame(animationId);
+      }
+
+      animationId = null;
+      dernierTemps = null;
+    }
+
+    function animer(temps) {
+      if (dernierTemps === null) {
+        dernierTemps = temps;
+      }
+
+      const delta =
+        Math.min(
+          (temps - dernierTemps) / 1000,
+          0.1
+        );
+
+      dernierTemps = temps;
+
+      positionY -= vitesse * delta;
+
+      if (positionY <= -hauteurBoucle) {
+        positionY += hauteurBoucle;
+      }
+
+      defilement.style.transform =
+        `translate3d(0, ${positionY.toFixed(2)}px, 0)`;
+
+      animationId =
+        requestAnimationFrame(animer);
+    }
+
+    function afficherAttente() {
+      arreterAnimation();
+
+      positionY = 0;
+
+      defilement.style.transform =
+        "translate3d(0, 0, 0)";
+
+      defilement.replaceChildren();
+
+      const bloc =
+        document.createElement("div");
+
+      bloc.className = "attente";
+
+      const carte =
+        document.createElement("div");
+
+      carte.className = "carte";
+
+      const nom =
+        document.createElement("div");
+
+      nom.className = "nom";
+
+      nom.textContent =
+        "Bienvenue à notre mariage";
+
+      const message =
+        document.createElement("div");
+
+      message.className = "message";
+
+      message.textContent =
+        "Scannez le QR code et écrivez-nous un message. Il apparaîtra bientôt sur cet écran.";
+
+      carte.append(nom, message);
+
+      bloc.appendChild(carte);
+
+      defilement.appendChild(bloc);
+    }
+
+    function afficher(messages) {
+      arreterAnimation();
+
+      positionY = 0;
+
+      defilement.style.transform =
+        "translate3d(0, 0, 0)";
+
+      defilement.replaceChildren();
+
+      if (messages.length === 0) {
+        afficherAttente();
+        return;
+      }
+
+      const premierGroupe =
+        creerGroupe(messages);
+
+      const secondGroupe =
+        creerGroupe(messages);
+
+      secondGroupe.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
+      defilement.append(
+        premierGroupe,
+        secondGroupe
+      );
+
+      requestAnimationFrame(() => {
+        hauteurBoucle =
+          premierGroupe.getBoundingClientRect().height;
+
+        vitesse = Math.min(
+          55,
+          Math.max(
+            32,
+            34 + messages.length * 0.7
+          )
+        );
+
+        /*
+          Les messages sont visibles immédiatement.
+        */
+        positionY = 0;
+        dernierTemps = null;
+
+        animationId =
+          requestAnimationFrame(animer);
+      });
+    }
+
+    function afficherNouveauMessage(item) {
+      if (!item) {
+        return;
+      }
+
+      clearTimeout(
+        minuterieNouveauMessage
+      );
+
+      nouveauMessage.replaceChildren();
+
+      const carte =
+        creerCarte(item);
+
+      const badge =
+        document.createElement("div");
+
+      badge.className = "badge";
+      badge.textContent = "Nouveau message";
+
+      carte.prepend(badge);
+
+      nouveauMessage.appendChild(carte);
+
+      nouveauMessage.classList.add(
+        "visible"
+      );
+
+      minuterieNouveauMessage =
+        setTimeout(() => {
+          nouveauMessage.classList.remove(
+            "visible"
+          );
+        }, DUREE_NOUVEAU_MESSAGE_MS);
+    }
+
+    async function chargerMessages() {
+      try {
+        /*
+          L’URL est appelée directement, sans ajout de paramètre.
+        */
+        const reponse =
+          await fetch(CSV_URL, {
+            method: "GET",
+            cache: "no-store"
+          });
+
+        if (!reponse.ok) {
+          throw new Error(
+            "Erreur HTTP : " + reponse.status
+          );
+        }
+
+        const csv =
+          await reponse.text();
+
+        const messages =
+          parserCSV(csv);
+
+        const signature =
+          JSON.stringify(messages);
+
+        if (
+          signature !== derniereSignature
+        ) {
+          /*
+            Lorsqu’un message supplémentaire est détecté,
+            le dernier message apparaît immédiatement au centre.
+          */
+          if (
+            nombrePrecedent !== null &&
+            messages.length > nombrePrecedent
+          ) {
+            afficherNouveauMessage(
+              messages[messages.length - 1]
+            );
+          }
+
+          nombrePrecedent =
+            messages.length;
+
+          derniereSignature =
+            signature;
+
+          afficher(messages);
+        }
+
+        info.classList.remove("erreur");
+
+        info.textContent =
+          messages.length +
+          " message" +
+          (
+            messages.length > 1
+              ? "s"
+              : ""
+          );
+
+      } catch (erreur) {
+        console.error(
+          "Erreur de récupération :",
+          erreur
+        );
+
+        info.classList.add("erreur");
+
+        info.textContent =
+          "Connexion aux messages impossible";
+      }
+    }
+
+    chargerMessages();
+
+    setInterval(
+      chargerMessages,
+      RAFRAICHISSEMENT_MS
+    );
+  </script>
 
 </body>
 </html>
