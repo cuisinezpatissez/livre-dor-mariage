@@ -1,457 +1,962 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
-<title>Livre d'or — Nathalie & Laurent</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2f1f2b">
 
-<style>
-:root{
-  --fond1:#f8e7e7;
-  --fond2:#fff6f0;
-  --or:#c28b54;
-  --brun:#8b5e3c;
-  --texte:#222;
-  --entete:145px;
-}
+  <title>Nathalie & Laurent — Livre d’or des invités</title>
 
-*{box-sizing:border-box}
+  <style>
+    :root {
+      --background-start: #2f1f2b;
+      --background-end: #6f4a5d;
+      --card-background: rgba(255, 255, 255, 0.94);
+      --card-border: rgba(255, 255, 255, 0.58);
+      --text-primary: #3a2932;
+      --text-secondary: #75596a;
+      --accent: #c89aa9;
+      --light-text: #fffafc;
+      --shadow: 0 18px 45px rgba(24, 12, 20, 0.22);
 
-html,body{
-  margin:0;
-  width:100%;
-  height:100%;
-}
+      --header-height: clamp(120px, 18vh, 190px);
+      --footer-height: clamp(42px, 6vh, 64px);
+      --content-gap: clamp(18px, 2.4vw, 32px);
+      --card-radius: 26px;
+    }
 
-body{
-  overflow:hidden;
-  background:linear-gradient(135deg,var(--fond1),var(--fond2));
-  font-family:Georgia,"Times New Roman",serif;
-}
+    * {
+      box-sizing: border-box;
+    }
 
-header{
-  height:var(--entete);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  background:linear-gradient(135deg,var(--fond1),var(--fond2));
-  box-shadow:0 10px 25px rgba(120,80,60,.12);
-  position:relative;
-  z-index:10;
-}
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
 
-h1{
-  color:var(--or);
-  font-size:clamp(40px,4vw,62px);
-  margin:0;
-  line-height:1;
-}
+    body {
+      position: relative;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--light-text);
+      background:
+        radial-gradient(
+          circle at 15% 15%,
+          rgba(255, 255, 255, 0.16),
+          transparent 27%
+        ),
+        radial-gradient(
+          circle at 85% 80%,
+          rgba(255, 220, 232, 0.12),
+          transparent 30%
+        ),
+        linear-gradient(
+          145deg,
+          var(--background-start),
+          var(--background-end)
+        );
+    }
 
-.sous-titre{
-  color:var(--brun);
-  font-size:clamp(21px,1.8vw,28px);
-  margin-top:10px;
-}
+    body::before,
+    body::after {
+      position: absolute;
+      z-index: 0;
+      width: min(38vw, 420px);
+      height: min(38vw, 420px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 50%;
+      content: "";
+      pointer-events: none;
+    }
 
-#zone{
-  height:calc(100vh - var(--entete));
-  overflow:hidden;
-  position:relative;
-}
+    body::before {
+      top: -18vw;
+      left: -12vw;
+    }
 
-#zone::before,
-#zone::after{
-  content:"";
-  position:absolute;
-  left:0;
-  width:100%;
-  height:85px;
-  z-index:5;
-  pointer-events:none;
-}
+    body::after {
+      right: -14vw;
+      bottom: -20vw;
+    }
 
-#zone::before{
-  top:0;
-  background:linear-gradient(to bottom,var(--fond1),transparent);
-}
+    .page {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-rows:
+        var(--header-height)
+        minmax(0, 1fr)
+        var(--footer-height);
 
-#zone::after{
-  bottom:0;
-  background:linear-gradient(to top,var(--fond2),transparent);
-}
+      width: 100%;
+      height: 100%;
+    }
 
-#defilement{
-  width:min(94%,1500px);
-  margin:0 auto;
-  will-change:transform;
-  transform:translate3d(0,0,0);
-}
+    .page-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 24px 12px;
+      text-align: center;
+    }
 
-.groupe{
-  padding:45px 0 75px;
-}
+    .page-title {
+      margin: 0;
+      font-size: clamp(2.6rem, 6vw, 5.8rem);
+      font-weight: 400;
+      line-height: 0.95;
+      letter-spacing: 0.02em;
+      text-shadow: 0 5px 22px rgba(20, 8, 16, 0.25);
+    }
 
-.carte{
-  background:rgba(255,255,255,.96);
-  border-radius:24px;
-  padding:24px 34px;
-  margin:20px 0;
-  box-shadow:0 10px 28px rgba(0,0,0,.14);
-}
+    .page-subtitle {
+      margin: 14px 0 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(0.95rem, 1.7vw, 1.45rem);
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
 
-.nom{
-  color:var(--brun);
-  font-size:clamp(26px,2vw,34px);
-  font-weight:bold;
-  margin-bottom:8px;
-}
+    .messages-window {
+      position: relative;
+      min-height: 0;
+      width: min(94vw, 1180px);
+      margin: 0 auto;
+      overflow: hidden;
+      border-radius: 30px;
 
-.message{
-  color:var(--texte);
-  font-size:clamp(28px,2.25vw,39px);
-  line-height:1.28;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-}
+      mask-image: linear-gradient(
+        to bottom,
+        transparent 0,
+        #000 5%,
+        #000 95%,
+        transparent 100%
+      );
 
-.attente{
-  height:calc(100vh - var(--entete));
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:30px;
-}
+      -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0,
+        #000 5%,
+        #000 95%,
+        transparent 100%
+      );
+    }
 
-.attente .carte{
-  width:min(900px,95%);
-  text-align:center;
-}
+    .messages-track {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      will-change: transform;
+    }
 
-/* Nouveau message affiché immédiatement */
-#nouveau-message{
-  position:fixed;
-  left:50%;
-  top:55%;
-  transform:translate(-50%,-50%) scale(.96);
-  width:min(88%,1100px);
-  z-index:50;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .35s ease, transform .35s ease;
-}
+    .messages-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--content-gap);
+      width: 100%;
+      padding: clamp(28px, 5vh, 58px) 10px;
+    }
 
-#nouveau-message.visible{
-  opacity:1;
-  transform:translate(-50%,-50%) scale(1);
-}
+    .message-card {
+      width: min(92%, 920px);
+      margin: 0 auto;
+      padding: clamp(22px, 3vw, 38px);
+      color: var(--text-primary);
+      background: var(--card-background);
+      border: 1px solid var(--card-border);
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
 
-#nouveau-message .carte{
-  border:2px solid rgba(194,139,84,.24);
-  box-shadow:0 18px 60px rgba(65,40,30,.30);
-}
+    .guest-name {
+      margin: 0 0 12px;
+      color: var(--text-secondary);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(1.05rem, 2vw, 1.55rem);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
 
-.badge{
-  font-family:Arial,sans-serif;
-  text-transform:uppercase;
-  letter-spacing:2px;
-  color:var(--or);
-  font-size:16px;
-  margin-bottom:12px;
-}
+    .guest-message {
+      margin: 0;
+      font-size: clamp(1.25rem, 2.45vw, 2.15rem);
+      line-height: 1.48;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
 
-.info{
-  position:fixed;
-  bottom:10px;
-  right:22px;
-  font-family:Arial,sans-serif;
-  color:#9b7a66;
-  font-size:14px;
-  z-index:20;
-}
+    .waiting-state {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
 
-.erreur{color:#a33}
+    .waiting-card {
+      width: min(90%, 760px);
+      padding: clamp(28px, 5vw, 54px);
+      color: var(--text-primary);
+      background: var(--card-background);
+      border: 1px solid var(--card-border);
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+    }
 
-@media(max-width:800px){
-  :root{--entete:125px}
-  .carte{padding:21px 24px}
-}
-</style>
+    .waiting-title {
+      margin: 0 0 12px;
+      font-size: clamp(1.7rem, 4vw, 3rem);
+      font-weight: 400;
+    }
+
+    .waiting-text {
+      margin: 0;
+      color: var(--text-secondary);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(1rem, 2vw, 1.35rem);
+      line-height: 1.5;
+    }
+
+    .latest-overlay {
+      position: absolute;
+      inset:
+        var(--header-height)
+        0
+        var(--footer-height);
+
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(37, 22, 31, 0.64);
+      opacity: 0;
+      visibility: hidden;
+      transition:
+        opacity 420ms ease,
+        visibility 420ms ease;
+
+      pointer-events: none;
+    }
+
+    .latest-overlay.is-visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .latest-card {
+      width: min(92vw, 900px);
+      max-height: 78%;
+      overflow: auto;
+      padding: clamp(28px, 5vw, 54px);
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.98);
+      border: 1px solid rgba(255, 255, 255, 0.78);
+      border-radius: 30px;
+      box-shadow: 0 26px 80px rgba(15, 5, 11, 0.38);
+      text-align: center;
+    }
+
+    .latest-label {
+      margin: 0 0 18px;
+      color: var(--accent);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(0.85rem, 1.4vw, 1rem);
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .latest-name {
+      margin: 0 0 16px;
+      color: var(--text-secondary);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(1.15rem, 2.4vw, 1.8rem);
+      font-weight: 700;
+    }
+
+    .latest-message {
+      margin: 0;
+      font-size: clamp(1.45rem, 3.3vw, 2.8rem);
+      line-height: 1.42;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+
+    .page-footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 20px 14px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(0.9rem, 1.6vw, 1.15rem);
+      letter-spacing: 0.04em;
+    }
+
+    .status-text {
+      margin: 0;
+      opacity: 0.92;
+    }
+
+    .status-text.is-error {
+      color: #ffd8df;
+    }
+
+    @media (max-width: 640px) {
+      :root {
+        --header-height: 120px;
+        --footer-height: 50px;
+        --content-gap: 16px;
+        --card-radius: 20px;
+      }
+
+      .page-header {
+        padding-inline: 14px;
+      }
+
+      .page-title {
+        font-size: clamp(2.15rem, 12vw, 3.2rem);
+      }
+
+      .page-subtitle {
+        margin-top: 9px;
+        font-size: 0.78rem;
+        letter-spacing: 0.12em;
+      }
+
+      .messages-window {
+        width: 96vw;
+        border-radius: 22px;
+      }
+
+      .messages-group {
+        padding: 26px 4px;
+      }
+
+      .message-card {
+        width: 94%;
+        padding: 20px;
+      }
+
+      .guest-message {
+        font-size: 1.2rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .messages-window {
+        mask-image: none;
+        -webkit-mask-image: none;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <main class="page">
+    <header class="page-header">
+      <h1 class="page-title">Nathalie &amp; Laurent</h1>
+      <p class="page-subtitle">Livre d’or des invités</p>
+    </header>
 
-<header>
-  <h1>💗 Nathalie &amp; Laurent 💗</h1>
-  <div class="sous-titre">Livre d’or des invités</div>
-</header>
+    <section
+      id="messagesWindow"
+      class="messages-window"
+      aria-live="polite"
+      aria-label="Messages du livre d’or"
+    >
+      <div id="messagesTrack" class="messages-track"></div>
 
-<div id="zone">
-  <div id="defilement"></div>
-</div>
+      <div id="waitingState" class="waiting-state">
+        <div class="waiting-card">
+          <h2 class="waiting-title">
+            Bienvenue dans notre livre d’or
+          </h2>
 
-<div id="nouveau-message"></div>
-<div class="info" id="info">Chargement…</div>
+          <p class="waiting-text">
+            Les premiers messages apparaîtront ici après leur envoi.
+          </p>
+        </div>
+      </div>
+    </section>
 
-<script>
-const CSV_URL =
-"https://docs.google.com/spreadsheets/d/e/2PACX-1vRjWC39iTfhs66h6IzggGiK4T7zCk1AECayVdBFRviG6zvofKjJUtqk2MTxy2jwRKCbB5VtSQpul0-F/pub?gid=1981975631&single=true&output=csv";
+    <footer class="page-footer">
+      <p id="statusText" class="status-text">
+        Chargement des messages…
+      </p>
+    </footer>
+  </main>
 
-/*
-  Vérification toutes les 2 secondes.
-  Google Sheets peut malgré tout mettre quelques secondes à republier le CSV.
-*/
-const RAFRAICHISSEMENT_MS = 2000;
-const DUREE_NOUVEAU_MESSAGE_MS = 9000;
-const MODERATION_ACTIVE = false;
+  <div
+    id="latestOverlay"
+    class="latest-overlay"
+    aria-hidden="true"
+  >
+    <article class="latest-card">
+      <p class="latest-label">Nouveau message</p>
+      <h2 id="latestName" class="latest-name"></h2>
+      <p id="latestMessage" class="latest-message"></p>
+    </article>
+  </div>
 
-const zone = document.getElementById("zone");
-const defilement = document.getElementById("defilement");
-const info = document.getElementById("info");
-const nouveauMessage = document.getElementById("nouveau-message");
+  <script>
+    "use strict";
 
-let derniereSignature = "";
-let nombrePrecedent = null;
-let animationId = null;
-let positionY = 0;
-let hauteurBoucle = 0;
-let dernierTemps = null;
-let vitesse = 38;
-let minuterieNouveauMessage = null;
+    const CSV_URL =
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vRjWC39iTfhs66h6IzggGiK4T7zCk1AECayVdBFRviG6zvofKjJUtqk2MTxy2jwRKCbB5VtSQpul0-F/pub?gid=1981975631&single=true&output=csv";
 
-function texte(value){
-  return String(value ?? "").trim();
-}
+    const MODERATION_ENABLED = false;
+    const REFRESH_INTERVAL_MS = 15000;
+    const FETCH_TIMEOUT_MS = 10000;
+    const LATEST_MESSAGE_DISPLAY_MS = 6000;
+    const SCROLL_SPEED_PX_PER_SECOND = 28;
 
-function parserCSV(csv){
-  const lignes = [];
-  let ligne = [];
-  let cellule = "";
-  let dansGuillemets = false;
+    const messagesWindow =
+      document.getElementById("messagesWindow");
 
-  for(let i=0;i<csv.length;i++){
-    const c = csv[i];
-    const suivant = csv[i+1];
+    const messagesTrack =
+      document.getElementById("messagesTrack");
 
-    if(c === '"'){
-      if(dansGuillemets && suivant === '"'){
-        cellule += '"';
-        i++;
-      }else{
-        dansGuillemets = !dansGuillemets;
+    const waitingState =
+      document.getElementById("waitingState");
+
+    const statusText =
+      document.getElementById("statusText");
+
+    const latestOverlay =
+      document.getElementById("latestOverlay");
+
+    const latestName =
+      document.getElementById("latestName");
+
+    const latestMessage =
+      document.getElementById("latestMessage");
+
+    let isLoading = false;
+    let lastSignature = "";
+    let currentMessages = [];
+    let animationFrameId = null;
+    let resizeTimerId = null;
+    let latestMessageTimerId = null;
+    let scrollOffset = 0;
+    let loopHeight = 0;
+    let previousFrameTime = null;
+
+    function parseCsv(csvText) {
+      const rows = [];
+
+      let row = [];
+      let field = "";
+      let insideQuotes = false;
+
+      for (
+        let index = 0;
+        index < csvText.length;
+        index += 1
+      ) {
+        const character = csvText[index];
+        const nextCharacter = csvText[index + 1];
+
+        if (insideQuotes) {
+          if (
+            character === '"' &&
+            nextCharacter === '"'
+          ) {
+            field += '"';
+            index += 1;
+          } else if (character === '"') {
+            insideQuotes = false;
+          } else {
+            field += character;
+          }
+        } else if (character === '"') {
+          insideQuotes = true;
+        } else if (character === ",") {
+          row.push(field);
+          field = "";
+        } else if (character === "\n") {
+          row.push(field);
+          rows.push(row);
+
+          row = [];
+          field = "";
+        } else if (character !== "\r") {
+          field += character;
+        }
       }
-    }else if(c === "," && !dansGuillemets){
-      ligne.push(cellule);
-      cellule = "";
-    }else if((c === "\n" || c === "\r") && !dansGuillemets){
-      if(c === "\r" && suivant === "\n") i++;
-      ligne.push(cellule);
-      cellule = "";
 
-      if(ligne.some(v => texte(v) !== "")){
-        lignes.push(ligne);
+      row.push(field);
+
+      if (
+        row.length > 1 ||
+        row[0] !== ""
+      ) {
+        rows.push(row);
       }
-      ligne = [];
-    }else{
-      cellule += c;
+
+      return rows;
     }
-  }
 
-  ligne.push(cellule);
-  if(ligne.some(v => texte(v) !== "")){
-    lignes.push(ligne);
-  }
+    function normalizeCell(value) {
+      return String(value ?? "")
+        .replace(/^\uFEFF/, "")
+        .trim();
+    }
 
-  return lignes.slice(1)
-    .map(cols => ({
-      nom: texte(cols[1]),
-      message: texte(cols[2]),
-      validation: texte(cols[3]).toUpperCase()
-    }))
-    .filter(item =>
-      item.nom &&
-      item.message &&
-      (!MODERATION_ACTIVE || item.validation === "OUI")
+    function rowsToMessages(rows) {
+      if (rows.length === 0) {
+        return [];
+      }
+
+      const firstRow = rows[0].map((cell) =>
+        normalizeCell(cell).toLowerCase()
+      );
+
+      const hasHeader = firstRow.some((cell) =>
+        cell.includes("horodatage") ||
+        cell === "nom" ||
+        cell.includes("message") ||
+        cell.includes("validation")
+      );
+
+      const dataRows = hasHeader
+        ? rows.slice(1)
+        : rows;
+
+      return dataRows
+        .map((columns, index) => {
+          const timestamp =
+            normalizeCell(columns[0]);
+
+          const name =
+            normalizeCell(columns[1]);
+
+          const message =
+            normalizeCell(columns[2]);
+
+          const validation =
+            normalizeCell(columns[3]).toUpperCase();
+
+          return {
+            id: `${timestamp}|${name}|${message}|${index}`,
+            timestamp,
+            name: name || "Un invité",
+            message,
+            validation
+          };
+        })
+        .filter((entry) => entry.message !== "")
+        .filter(
+          (entry) =>
+            !MODERATION_ENABLED ||
+            entry.validation === "OUI"
+        );
+    }
+
+    function createMessageCard(messageData) {
+      const card =
+        document.createElement("article");
+
+      card.className = "message-card";
+
+      const nameElement =
+        document.createElement("h2");
+
+      nameElement.className = "guest-name";
+      nameElement.textContent = messageData.name;
+
+      const messageElement =
+        document.createElement("p");
+
+      messageElement.className = "guest-message";
+      messageElement.textContent =
+        messageData.message;
+
+      card.append(
+        nameElement,
+        messageElement
+      );
+
+      return card;
+    }
+
+    function createMessagesGroup(
+      messages,
+      isDuplicate
+    ) {
+      const group =
+        document.createElement("div");
+
+      group.className = "messages-group";
+
+      if (isDuplicate) {
+        group.setAttribute(
+          "aria-hidden",
+          "true"
+        );
+      }
+
+      messages.forEach((messageData) => {
+        group.appendChild(
+          createMessageCard(messageData)
+        );
+      });
+
+      return group;
+    }
+
+    function stopScrollAnimation() {
+      if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+
+      previousFrameTime = null;
+    }
+
+    function animateScroll(frameTime) {
+      if (previousFrameTime === null) {
+        previousFrameTime = frameTime;
+      }
+
+      const elapsedSeconds = Math.min(
+        (frameTime - previousFrameTime) / 1000,
+        0.1
+      );
+
+      previousFrameTime = frameTime;
+
+      scrollOffset +=
+        SCROLL_SPEED_PX_PER_SECOND *
+        elapsedSeconds;
+
+      if (
+        loopHeight > 0 &&
+        scrollOffset >= loopHeight
+      ) {
+        scrollOffset %= loopHeight;
+      }
+
+      messagesTrack.style.transform =
+        `translate3d(0, ${-scrollOffset}px, 0)`;
+
+      animationFrameId =
+        requestAnimationFrame(animateScroll);
+    }
+
+    function startScrollAnimation() {
+      stopScrollAnimation();
+
+      messagesTrack.style.top = "0";
+      messagesTrack.style.transform =
+        "translate3d(0, 0, 0)";
+
+      scrollOffset = 0;
+      loopHeight = 0;
+
+      const duplicateGroup =
+        messagesTrack.querySelector(
+          '[aria-hidden="true"]'
+        );
+
+      if (duplicateGroup) {
+        duplicateGroup.remove();
+      }
+
+      const firstGroup =
+        messagesTrack.querySelector(
+          ".messages-group"
+        );
+
+      if (
+        !firstGroup ||
+        currentMessages.length === 0
+      ) {
+        return;
+      }
+
+      requestAnimationFrame(() => {
+        const groupHeight =
+          firstGroup.getBoundingClientRect().height;
+
+        const windowHeight =
+          messagesWindow.clientHeight;
+
+        if (groupHeight <= windowHeight) {
+          messagesTrack.style.top = "50%";
+          messagesTrack.style.transform =
+            "translate3d(0, -50%, 0)";
+
+          return;
+        }
+
+        messagesTrack.appendChild(
+          createMessagesGroup(
+            currentMessages,
+            true
+          )
+        );
+
+        messagesTrack.style.top = "0";
+        loopHeight = groupHeight;
+
+        animationFrameId =
+          requestAnimationFrame(
+            animateScroll
+          );
+      });
+    }
+
+    function renderMessages(messages) {
+      stopScrollAnimation();
+      messagesTrack.replaceChildren();
+
+      currentMessages = messages;
+
+      if (messages.length === 0) {
+        waitingState.hidden = false;
+
+        messagesTrack.style.top = "0";
+        messagesTrack.style.transform =
+          "translate3d(0, 0, 0)";
+
+        updateStatus(false);
+        return;
+      }
+
+      waitingState.hidden = true;
+
+      messagesTrack.appendChild(
+        createMessagesGroup(
+          messages,
+          false
+        )
+      );
+
+      updateStatus(false);
+      startScrollAnimation();
+    }
+
+    function updateStatus(hasError) {
+      statusText.classList.toggle(
+        "is-error",
+        hasError
+      );
+
+      if (hasError) {
+        if (currentMessages.length > 0) {
+          const plural =
+            currentMessages.length > 1;
+
+          statusText.textContent =
+            `${currentMessages.length} ` +
+            `message${plural ? "s" : ""} ` +
+            `affiché${plural ? "s" : ""} — ` +
+            "mise à jour temporairement indisponible";
+        } else {
+          statusText.textContent =
+            "Impossible de charger les messages pour le moment";
+        }
+
+        return;
+      }
+
+      if (currentMessages.length === 0) {
+        statusText.textContent =
+          "Aucun message pour le moment";
+
+        return;
+      }
+
+      statusText.textContent =
+        `${currentMessages.length} ` +
+        `message${currentMessages.length > 1 ? "s" : ""}`;
+    }
+
+    function showLatestMessage(messageData) {
+      if (!messageData) {
+        return;
+      }
+
+      if (latestMessageTimerId !== null) {
+        clearTimeout(latestMessageTimerId);
+      }
+
+      latestName.textContent =
+        messageData.name;
+
+      latestMessage.textContent =
+        messageData.message;
+
+      latestOverlay.classList.add(
+        "is-visible"
+      );
+
+      latestOverlay.setAttribute(
+        "aria-hidden",
+        "false"
+      );
+
+      latestMessageTimerId =
+        window.setTimeout(() => {
+          latestOverlay.classList.remove(
+            "is-visible"
+          );
+
+          latestOverlay.setAttribute(
+            "aria-hidden",
+            "true"
+          );
+
+          latestMessageTimerId = null;
+        }, LATEST_MESSAGE_DISPLAY_MS);
+    }
+
+    function buildSignature(messages) {
+      return JSON.stringify(
+        messages.map((entry) => [
+          entry.timestamp,
+          entry.name,
+          entry.message,
+          entry.validation
+        ])
+      );
+    }
+
+    async function loadMessages() {
+      if (isLoading) {
+        return;
+      }
+
+      isLoading = true;
+
+      const controller =
+        new AbortController();
+
+      const timeoutId =
+        window.setTimeout(
+          () => controller.abort(),
+          FETCH_TIMEOUT_MS
+        );
+
+      try {
+        const response = await fetch(
+          CSV_URL,
+          {
+            method: "GET",
+            cache: "no-store",
+            signal: controller.signal
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            `Réponse HTTP ${response.status}`
+          );
+        }
+
+        const csvText =
+          await response.text();
+
+        const parsedRows =
+          parseCsv(csvText);
+
+        const messages =
+          rowsToMessages(parsedRows);
+
+        const newSignature =
+          buildSignature(messages);
+
+        if (newSignature !== lastSignature) {
+          const previousIds =
+            new Set(
+              currentMessages.map(
+                (entry) => entry.id
+              )
+            );
+
+          const addedMessages =
+            messages.filter(
+              (entry) =>
+                !previousIds.has(entry.id)
+            );
+
+          const isInitialLoad =
+            lastSignature === "";
+
+          lastSignature = newSignature;
+
+          renderMessages(messages);
+
+          if (
+            !isInitialLoad &&
+            addedMessages.length > 0
+          ) {
+            showLatestMessage(
+              addedMessages[
+                addedMessages.length - 1
+              ]
+            );
+          }
+        } else {
+          updateStatus(false);
+        }
+      } catch (error) {
+        console.error(
+          "Erreur lors du chargement du livre d’or :",
+          error
+        );
+
+        updateStatus(true);
+      } finally {
+        clearTimeout(timeoutId);
+        isLoading = false;
+      }
+    }
+
+    window.addEventListener(
+      "resize",
+      () => {
+        if (resizeTimerId !== null) {
+          clearTimeout(resizeTimerId);
+        }
+
+        resizeTimerId =
+          window.setTimeout(() => {
+            startScrollAnimation();
+            resizeTimerId = null;
+          }, 200);
+      }
     );
-}
 
-function creerCarte(item){
-  const carte = document.createElement("article");
-  carte.className = "carte";
-
-  const nom = document.createElement("div");
-  nom.className = "nom";
-  nom.textContent = item.nom;
-
-  const message = document.createElement("div");
-  message.className = "message";
-  message.textContent = `“${item.message}”`;
-
-  carte.append(nom,message);
-  return carte;
-}
-
-function creerGroupe(messages){
-  const groupe = document.createElement("section");
-  groupe.className = "groupe";
-
-  messages.forEach(item => groupe.appendChild(creerCarte(item)));
-  return groupe;
-}
-
-function arreterAnimation(){
-  if(animationId !== null){
-    cancelAnimationFrame(animationId);
-  }
-  animationId = null;
-  dernierTemps = null;
-}
-
-function animer(temps){
-  if(dernierTemps === null) dernierTemps = temps;
-
-  const delta = Math.min((temps - dernierTemps) / 1000, .1);
-  dernierTemps = temps;
-  positionY -= vitesse * delta;
-
-  /*
-    Correction essentielle :
-    on ne teste plus Math.abs(positionY).
-    La boucle revient au début uniquement quand le premier groupe
-    est entièrement sorti vers le haut.
-  */
-  if(positionY <= -hauteurBoucle){
-    positionY += hauteurBoucle;
-  }
-
-  defilement.style.transform =
-    `translate3d(0,${positionY.toFixed(2)}px,0)`;
-
-  animationId = requestAnimationFrame(animer);
-}
-
-function afficherAttente(){
-  arreterAnimation();
-  positionY = 0;
-  defilement.style.transform = "translate3d(0,0,0)";
-  defilement.replaceChildren();
-
-  const bloc = document.createElement("div");
-  bloc.className = "attente";
-
-  const carte = document.createElement("div");
-  carte.className = "carte";
-
-  const nom = document.createElement("div");
-  nom.className = "nom";
-  nom.textContent = "Bienvenue à notre mariage";
-
-  const message = document.createElement("div");
-  message.className = "message";
-  message.textContent =
-    "Scannez le QR code et écrivez-nous un message. Il apparaîtra bientôt sur cet écran.";
-
-  carte.append(nom,message);
-  bloc.appendChild(carte);
-  defilement.appendChild(bloc);
-}
-
-function afficher(messages){
-  arreterAnimation();
-  positionY = 0;
-  defilement.style.transform = "translate3d(0,0,0)";
-  defilement.replaceChildren();
-
-  if(messages.length === 0){
-    afficherAttente();
-    return;
-  }
-
-  const groupe1 = creerGroupe(messages);
-  const groupe2 = creerGroupe(messages);
-  groupe2.setAttribute("aria-hidden","true");
-
-  defilement.append(groupe1,groupe2);
-
-  requestAnimationFrame(() => {
-    hauteurBoucle = groupe1.getBoundingClientRect().height;
-    vitesse = Math.min(55, Math.max(32, 34 + messages.length * .7));
-
-    /*
-      Le contenu démarre visible immédiatement.
-      Il ne commence plus sous l'écran.
-    */
-    positionY = 0;
-    dernierTemps = null;
-    animationId = requestAnimationFrame(animer);
-  });
-}
-
-function afficherNouveauMessage(item){
-  if(!item) return;
-
-  clearTimeout(minuterieNouveauMessage);
-  nouveauMessage.replaceChildren();
-
-  const carte = creerCarte(item);
-  const badge = document.createElement("div");
-  badge.className = "badge";
-  badge.textContent = "Nouveau message";
-  carte.prepend(badge);
-
-  nouveauMessage.appendChild(carte);
-  nouveauMessage.classList.add("visible");
-
-  minuterieNouveauMessage = setTimeout(() => {
-    nouveauMessage.classList.remove("visible");
-  }, DUREE_NOUVEAU_MESSAGE_MS);
-}
-
-async function chargerMessages(){
-  try{
-    const separateur = CSV_URL.includes("?") ? "&" : "?";
-    const reponse = await fetch(
-      CSV_URL + separateur + "cache=" + Date.now(),
-      {cache:"no-store"}
+    document.addEventListener(
+      "visibilitychange",
+      () => {
+        if (document.hidden) {
+          stopScrollAnimation();
+        } else {
+          startScrollAnimation();
+          loadMessages();
+        }
+      }
     );
 
-    if(!reponse.ok){
-      throw new Error("HTTP " + reponse.status);
-    }
+    loadMessages();
 
-    const csv = await reponse.text();
-    const messages = parserCSV(csv);
-    const signature = JSON.stringify(messages);
-
-    if(signature !== derniereSignature){
-      /*
-        Lorsqu'un nouveau message est ajouté après le premier chargement,
-        il apparaît immédiatement au centre pendant 9 secondes.
-      */
-      if(nombrePrecedent !== null && messages.length > nombrePrecedent){
-        afficherNouveauMessage(messages[messages.length - 1]);
-      }
-
-      nombrePrecedent = messages.length;
-      derniereSignature = signature;
-      afficher(messages);
-    }
-
-    info.classList.remove("erreur");
-    info.textContent =
-      messages.length + " message" + (messages.length > 1 ? "s" : "");
-  }catch(erreur){
-    console.error(erreur);
-    info.classList.add("erreur");
-    info.textContent = "Erreur de chargement";
-  }
-}
-
-chargerMessages();
-setInterval(chargerMessages, RAFRAICHISSEMENT_MS);
-</script>
-
+    window.setInterval(
+      loadMessages,
+      REFRESH_INTERVAL_MS
+    );
+  </script>
 </body>
 </html>
