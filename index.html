@@ -707,6 +707,7 @@
     function createMessageCard(messageData) {
       const card = document.createElement("article");
       card.className = "message-card";
+      card.dataset.messageId = messageData.id;
 
       const nameElement = document.createElement("h2");
       nameElement.className = "guest-name";
@@ -734,6 +735,30 @@
       });
 
       return group;
+    }
+
+    function captureScrollState() {
+      const firstGroup = messagesTrack.querySelector(".messages-group:not([data-duplicate='true'])");
+
+      if (!firstGroup || currentMessages.length === 0) {
+        return null;
+      }
+
+      const windowRect = messagesWindow.getBoundingClientRect();
+      const cards = Array.from(firstGroup.querySelectorAll(".message-card"));
+      const visibleCard = cards.find((card) => {
+        const cardRect = card.getBoundingClientRect();
+        return cardRect.bottom > windowRect.top && cardRect.top < windowRect.bottom;
+      });
+
+      return {
+        anchorId: visibleCard ? visibleCard.dataset.messageId : "",
+        anchorTop: visibleCard
+          ? visibleCard.getBoundingClientRect().top - windowRect.top
+          : 0,
+        progress: loopHeight > 0 ? scrollOffset / loopHeight : 0,
+        absoluteOffset: scrollOffset
+      };
     }
 
     function stopScrollAnimation() {
@@ -767,16 +792,18 @@
       animationFrameId = requestAnimationFrame(animateScroll);
     }
 
-    function startScrollAnimation() {
+    function startScrollAnimation(preservedState = null) {
+      const state = preservedState || captureScrollState();
+
       stopScrollAnimation();
       messagesTrack.querySelectorAll('[data-duplicate="true"]').forEach((element) => element.remove());
       messagesTrack.style.top = "0";
       messagesTrack.style.transform = "translate3d(0, 0, 0)";
-      scrollOffset = 0;
       loopHeight = 0;
 
       const firstGroup = messagesTrack.querySelector(".messages-group");
       if (!firstGroup || currentMessages.length === 0) {
+        scrollOffset = 0;
         return;
       }
 
@@ -787,6 +814,7 @@
         const windowHeight = messagesWindow.clientHeight;
 
         if (groupHeight <= windowHeight) {
+          scrollOffset = 0;
           messagesTrack.style.top = "50%";
           messagesTrack.style.transform = "translate3d(0, -50%, 0)";
           return;
@@ -794,6 +822,24 @@
 
         messagesTrack.appendChild(createMessagesGroup(currentMessages, true));
         loopHeight = groupHeight;
+
+        let restoredOffset = 0;
+
+        if (state && state.anchorId) {
+          const matchingCard = Array.from(firstGroup.querySelectorAll(".message-card"))
+            .find((card) => card.dataset.messageId === state.anchorId);
+
+          if (matchingCard) {
+            restoredOffset = matchingCard.offsetTop - state.anchorTop;
+          } else if (Number.isFinite(state.progress)) {
+            restoredOffset = state.progress * groupHeight;
+          }
+        } else if (state && Number.isFinite(state.absoluteOffset)) {
+          restoredOffset = state.absoluteOffset;
+        }
+
+        scrollOffset = ((restoredOffset % groupHeight) + groupHeight) % groupHeight;
+        messagesTrack.style.transform = `translate3d(0, ${-scrollOffset}px, 0)`;
         animationFrameId = requestAnimationFrame(animateScroll);
       });
     }
@@ -816,6 +862,8 @@
     }
 
     function renderMessages(messages) {
+      const preservedScrollState = captureScrollState();
+
       stopScrollAnimation();
       messagesTrack.replaceChildren();
       currentMessages = messages;
@@ -829,7 +877,7 @@
 
       waitingState.hidden = true;
       messagesTrack.appendChild(createMessagesGroup(messages, false));
-      startScrollAnimation();
+      startScrollAnimation(preservedScrollState);
     }
 
     function showLatestMessage(messageData) {
@@ -959,7 +1007,8 @@
       }
 
       resizeTimerId = window.setTimeout(() => {
-        startScrollAnimation();
+        const preservedScrollState = captureScrollState();
+        startScrollAnimation(preservedScrollState);
         resizeTimerId = null;
       }, 220);
     });
@@ -978,4 +1027,3 @@
   </script>
 </body>
 </html>
-
