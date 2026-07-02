@@ -507,13 +507,22 @@
   <script>
     "use strict";
 
-    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRjWC39iTfhs66h6IzggGiK4T7zCk1AECayVdBFRviG6zvofKjJUtqk2MTxy2jwRKCbB5VtSQpul0-F/pub?gid=1981975631&single=true&output=csv";
+    /*
+      ÉTAPE UNIQUE APRÈS LE DÉPLOIEMENT DU GOOGLE APPS SCRIPT :
+      remplacez la valeur ci-dessous par l’adresse qui se termine par /exec.
+      Tant que cette adresse n’est pas renseignée, le site utilise automatiquement
+      le flux CSV actuel comme solution de secours.
+    */
+    const APPS_SCRIPT_URL = "COLLEZ_ICI_L_ADRESSE_APPS_SCRIPT_SE_TERMINANT_PAR_EXEC";
+
+    const CSV_FALLBACK_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRjWC39iTfhs66h6IzggGiK4T7zCk1AECayVdBFRviG6zvofKjJUtqk2MTxy2jwRKCbB5VtSQpul0-F/pub?gid=1981975631&single=true&output=csv";
     const MODERATION_ENABLED = false;
-    const REFRESH_INTERVAL_MS = 10000;
-    const FETCH_TIMEOUT_MS = 12000;
-    const CACHE_BUCKET_MS = 60000;
+    const REFRESH_INTERVAL_MS = 7000;
+    const FETCH_TIMEOUT_MS = 10000;
     const LATEST_MESSAGE_DISPLAY_MS = 6500;
     const SCROLL_SPEED_PX_PER_SECOND = 24;
+    const SEEN_STORAGE_KEY = "livreDorNathalieLaurentSeenIdsV2";
+    const MAX_STORED_SEEN_IDS = 5000;
 
     const messagesWindow = document.getElementById("messagesWindow");
     const messagesTrack = document.getElementById("messagesTrack");
@@ -524,6 +533,7 @@
     const latestMessage = document.getElementById("latestMessage");
 
     let isLoading = false;
+    let hasCompletedInitialLoad = false;
     let lastSignature = "";
     let currentMessages = [];
     let animationFrameId = null;
@@ -533,6 +543,77 @@
     let scrollOffset = 0;
     let loopHeight = 0;
     let previousFrameTime = null;
+    let consecutiveApiErrors = 0;
+    let seenIds = loadSeenIds();
+
+    function loadSeenIds() {
+      try {
+        const savedValue = localStorage.getItem(SEEN_STORAGE_KEY);
+        const parsedValue = savedValue ? JSON.parse(savedValue) : [];
+        return new Set(Array.isArray(parsedValue) ? parsedValue : []);
+      } catch (error) {
+        console.warn("Impossible de relire l’historique local :", error);
+        return new Set();
+      }
+    }
+
+    function saveSeenIds() {
+      try {
+        const allIds = Array.from(seenIds);
+        const trimmedIds = allIds.slice(Math.max(0, allIds.length - MAX_STORED_SEEN_IDS));
+        localStorage.setItem(SEEN_STORAGE_KEY, JSON.stringify(trimmedIds));
+      } catch (error) {
+        console.warn("Impossible d’enregistrer l’historique local :", error);
+      }
+    }
+
+    function rememberMessages(messages) {
+      let changed = false;
+
+      messages.forEach((entry) => {
+        if (!seenIds.has(entry.id)) {
+          seenIds.add(entry.id);
+          changed = true;
+        }
+      });
+
+      if (changed) {
+        saveSeenIds();
+      }
+    }
+
+    function isAppsScriptConfigured() {
+      return /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec(?:\?|$)/i.test(APPS_SCRIPT_URL);
+    }
+
+    function normalizeCell(value) {
+      return String(value ?? "").replace(/^\uFEFF/, "").trim();
+    }
+
+    function makeStableId(timestamp, name, message) {
+      return `${timestamp}\u241f${name}\u241f${message}`;
+    }
+
+    function normalizeMessage(rawEntry) {
+      const timestamp = normalizeCell(rawEntry.timestamp);
+      const rawName = normalizeCell(rawEntry.name);
+      const message = normalizeCell(rawEntry.message);
+      const validation = normalizeCell(rawEntry.validation).toUpperCase();
+
+      return {
+        id: makeStableId(timestamp, rawName, message),
+        timestamp,
+        name: rawName || "Un invité",
+        message,
+        validation
+      };
+    }
+
+    function applyModeration(messages) {
+      return messages
+        .filter((entry) => entry.message !== "")
+        .filter((entry) => !MODERATION_ENABLED || entry.validation === "OUI");
+    }
 
     function parseCsv(csvText) {
       const rows = [];
@@ -576,21 +657,15 @@
       return rows;
     }
 
-    function normalizeCell(value) {
-      return String(value ?? "").replace(/^\uFEFF/, "").trim();
-    }
-
-    function makeStableId(timestamp, name, message) {
-      return `${timestamp}\u241f${name}\u241f${message}`;
-    }
-
     function findHeaderRowIndex(rows) {
       const searchLimit = Math.min(rows.length, 5);
 
       for (let index = 0; index < searchLimit; index += 1) {
         const normalizedRow = rows[index].map((cell) => normalizeCell(cell).toLowerCase());
         const hasTimestamp = normalizedRow.some((cell) => cell.includes("horodat"));
-        const hasName = normalizedRow.some((cell) => cell.includes("prénom") || cell.includes("prenom") || cell === "nom");
+        const hasName = normalizedRow.some((cell) =>
+          cell.includes("prénom") || cell.includes("prenom") || cell === "nom"
+        );
         const hasMessage = normalizedRow.some((cell) => cell.includes("message"));
 
         if (hasTimestamp && hasName && hasMessage) {
@@ -601,7 +676,7 @@
       return -1;
     }
 
-    function rowsToMessages(rows) {
+    function csvRowsToMessages(rows) {
       if (rows.length === 0) {
         return [];
       }
@@ -609,23 +684,24 @@
       const headerRowIndex = findHeaderRowIndex(rows);
       const dataRows = headerRowIndex >= 0 ? rows.slice(headerRowIndex + 1) : rows;
 
-      return dataRows
-        .map((columns) => {
-          const timestamp = normalizeCell(columns[0]);
-          const rawName = normalizeCell(columns[1]);
-          const message = normalizeCell(columns[2]);
-          const validation = normalizeCell(columns[3]).toUpperCase();
+      return applyModeration(
+        dataRows.map((columns) =>
+          normalizeMessage({
+            timestamp: columns[0],
+            name: columns[1],
+            message: columns[2],
+            validation: columns[3]
+          })
+        )
+      );
+    }
 
-          return {
-            id: makeStableId(timestamp, rawName, message),
-            timestamp,
-            name: rawName || "Un invité",
-            message,
-            validation
-          };
-        })
-        .filter((entry) => entry.message !== "")
-        .filter((entry) => !MODERATION_ENABLED || entry.validation === "OUI");
+    function jsonToMessages(payload) {
+      if (!payload || payload.ok !== true || !Array.isArray(payload.messages)) {
+        throw new Error("Réponse Apps Script invalide");
+      }
+
+      return applyModeration(payload.messages.map(normalizeMessage));
     }
 
     function createMessageCard(messageData) {
@@ -722,7 +798,7 @@
       });
     }
 
-    function updateStatus(hasError) {
+    function updateStatus(hasError, sourceLabel = "") {
       statusText.classList.toggle("is-error", hasError);
 
       if (hasError) {
@@ -732,9 +808,11 @@
         return;
       }
 
-      statusText.textContent = currentMessages.length === 0
+      const countText = currentMessages.length === 0
         ? "Aucun message pour le moment"
         : `${currentMessages.length} message${currentMessages.length > 1 ? "s" : ""}`;
+
+      statusText.textContent = sourceLabel ? `${countText} · ${sourceLabel}` : countText;
     }
 
     function renderMessages(messages) {
@@ -746,13 +824,11 @@
         waitingState.hidden = false;
         messagesTrack.style.top = "0";
         messagesTrack.style.transform = "translate3d(0, 0, 0)";
-        updateStatus(false);
         return;
       }
 
       waitingState.hidden = true;
       messagesTrack.appendChild(createMessagesGroup(messages, false));
-      updateStatus(false);
       startScrollAnimation();
     }
 
@@ -781,11 +857,51 @@
       return JSON.stringify(messages.map((entry) => [entry.id, entry.validation]));
     }
 
-    function buildRequestUrl() {
-      const requestUrl = new URL(CSV_URL);
-      const cacheBucket = Math.floor(Date.now() / CACHE_BUCKET_MS);
-      requestUrl.searchParams.set("_refresh", String(cacheBucket));
+    function buildFreshUrl(baseUrl) {
+      const requestUrl = new URL(baseUrl);
+      requestUrl.searchParams.set("_t", String(Date.now()));
       return requestUrl.toString();
+    }
+
+    async function fetchWithTimeout(url, responseType) {
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
+      try {
+        const response = await fetch(buildFreshUrl(url), {
+          method: "GET",
+          cache: "no-store",
+          redirect: "follow",
+          signal: controller.signal
+        });
+
+        if (!response.ok) {
+          throw new Error(`Réponse HTTP ${response.status}`);
+        }
+
+        return responseType === "json" ? await response.json() : await response.text();
+      } finally {
+        clearTimeout(timeoutId);
+      }
+    }
+
+    async function retrieveMessages() {
+      if (isAppsScriptConfigured()) {
+        const payload = await fetchWithTimeout(APPS_SCRIPT_URL, "json");
+        consecutiveApiErrors = 0;
+
+        return {
+          messages: jsonToMessages(payload),
+          sourceLabel: "direct"
+        };
+      }
+
+      const csvText = await fetchWithTimeout(CSV_FALLBACK_URL, "text");
+
+      return {
+        messages: csvRowsToMessages(parseCsv(csvText)),
+        sourceLabel: "CSV"
+      };
     }
 
     async function loadMessages() {
@@ -794,43 +910,45 @@
       }
 
       isLoading = true;
-      const controller = new AbortController();
-      const timeoutId = window.setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
       try {
-        const response = await fetch(buildRequestUrl(), {
-          method: "GET",
-          cache: "no-store",
-          signal: controller.signal
-        });
-
-        if (!response.ok) {
-          throw new Error(`Réponse HTTP ${response.status}`);
-        }
-
-        const csvText = await response.text();
-        const messages = rowsToMessages(parseCsv(csvText));
+        const result = await retrieveMessages();
+        const messages = result.messages;
         const newSignature = buildSignature(messages);
 
-        if (newSignature !== lastSignature) {
-          const previousIds = new Set(currentMessages.map((entry) => entry.id));
-          const addedMessages = messages.filter((entry) => !previousIds.has(entry.id));
-          const isInitialLoad = lastSignature === "";
+        /*
+          Les vrais nouveaux messages sont ceux qui n’ont jamais été vus par
+          ce navigateur. Un ancien message supprimé puis renvoyé par un cache
+          reste donc connu et ne peut plus être présenté comme nouveau.
+        */
+        const genuinelyNewMessages = hasCompletedInitialLoad
+          ? messages.filter((entry) => !seenIds.has(entry.id))
+          : [];
 
+        rememberMessages(messages);
+
+        if (newSignature !== lastSignature) {
           lastSignature = newSignature;
           renderMessages(messages);
-
-          if (!isInitialLoad && addedMessages.length > 0) {
-            showLatestMessage(addedMessages[addedMessages.length - 1]);
-          }
-        } else {
-          updateStatus(false);
         }
+
+        updateStatus(false, result.sourceLabel);
+
+        if (genuinelyNewMessages.length > 0) {
+          showLatestMessage(genuinelyNewMessages[genuinelyNewMessages.length - 1]);
+        }
+
+        hasCompletedInitialLoad = true;
       } catch (error) {
+        consecutiveApiErrors += 1;
         console.error("Erreur lors du chargement du livre d’or :", error);
+
+        /*
+          En cas d’erreur, les messages déjà affichés restent en place.
+          Aucun ancien flux n’écrase donc une version plus récente.
+        */
         updateStatus(true);
       } finally {
-        clearTimeout(timeoutId);
         isLoading = false;
       }
     }
