@@ -507,10 +507,10 @@
   <script>
     "use strict";
 
-    const CSV_URL = "https://docs.google.com/spreadsheets/d/16SW6DNNBQmxqe86HVTJGerULGupAIOXP9ZQ1DHJmzcs/gviz/tq?tqx=out:csv&gid=1981975631";
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRjWC39iTfhs66h6IzggGiK4T7zCk1AECayVdBFRviG6zvofKjJUtqk2MTxy2jwRKCbB5VtSQpul0-F/pub?gid=1981975631&single=true&output=csv";
     const MODERATION_ENABLED = false;
     const REFRESH_INTERVAL_MS = 8000;
-    const FETCH_TIMEOUT_MS = 7000;
+    const FETCH_TIMEOUT_MS = 12000;
     const LATEST_MESSAGE_DISPLAY_MS = 6500;
     const SCROLL_SPEED_PX_PER_SECOND = 24;
 
@@ -780,8 +780,7 @@
       const timeoutId = window.setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
       try {
-        const requestUrl = `${CSV_URL}&t=${Math.floor(Date.now() / REFRESH_INTERVAL_MS)}`;
-        const response = await fetch(requestUrl, {
+        const response = await fetch(CSV_URL, {
           method: "GET",
           cache: "no-store",
           signal: controller.signal
